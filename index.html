@@ -451,10 +451,12 @@ body{
   function getCounts(){ return USE_FB?liveCounts:counts(); }
   function onPhase(ph){ window.__phase=ph;
     if(!myDrink) return;
-    if(ph<=2){ if($('#picked').classList.contains('on')) goReveal(); return; }
-    if(ph===3) goDiscuss();
-    else if(ph===4) goScore();
-    else if(ph===5) goResult();
+    if(ph===3){ goDiscuss(); return; }
+    if(ph===4){ goScore(); return; }
+    if(ph===5){ goResult(); return; }
+    /* phase 0/1：選完罐留在「等主持人開罐」畫面，先不揭曉經典。
+       只有主控按到 phase 2 才開罐揭曉。 */
+    if(ph>=2 && $('#picked').classList.contains('on')) goReveal();
   }
 
   // cover text
