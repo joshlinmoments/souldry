@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="robots" content="noindex,nofollow" />
+<title>修道解惑所 · 靈魂解渴販賣機</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@500;700;900&family=Oswald:ital,wght@0,500;0,700;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#17121c; --bg2:#221826; --cream:#fff4e2; --muted:#c7b6a6;
+  --amber:#f5b641; --amber2:#ffd27a; --red:#e8552f; --ink:#120d16;
+  --glass:rgba(150,180,210,.14);
+  --machine1:#c24230; --machine2:#9a2f22; --machine-dark:#5c1c15;
+  --sold:#2b2730;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;}
+body{
+  font-family:"Noto Sans TC",system-ui,sans-serif;
+  background:var(--bg); color:var(--cream);
+  overflow-x:hidden; min-height:100dvh;
+}
+.app{position:relative; max-width:560px; margin:0 auto; min-height:100dvh; overflow:hidden;}
+.screen{display:none; min-height:100dvh; animation:fade .4s ease;}
+.screen.on{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sr-serif{font-family:"Noto Serif TC",serif;}
+.brandfont{font-family:"Oswald",sans-serif;font-style:italic;letter-spacing:.04em;}
+
+/* ---------- top bar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:none;
+  align-items:center;gap:8px;padding:8px 14px;
+  background:linear-gradient(to bottom,rgba(10,7,13,.92),rgba(10,7,13,0));
+  color:var(--cream);font-size:13px;}
+.topbar.on{display:flex;}
+.topbar .who{font-weight:700;}
+.topbar .tag{margin-left:auto;background:var(--amber);color:#3a2600;font-weight:700;
+  padding:2px 10px;border-radius:999px;font-size:12px;}
+
+/* ---------- COVER ---------- */
+#cover{position:relative;color:#fff;}
+#cover .bg{position:absolute;inset:0;background:#120d16 url('assets/shop-hero.png') center/cover no-repeat;}
+#cover .scrim{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(10,7,16,.35) 0%,rgba(10,7,16,.1) 34%,rgba(10,7,16,.72) 78%,rgba(10,7,16,.95) 100%);}
+#cover .inner{position:relative;min-height:100dvh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;text-align:center;padding:40px 24px calc(34px + var(--safe-b));}
+#cover .kodawari{position:absolute;top:calc(44px + var(--safe-b));left:0;right:0;text-align:center;}
+#cover .kodawari .en{font-family:"Oswald";letter-spacing:.42em;font-size:13px;color:var(--amber2);
+  text-transform:uppercase;opacity:.9;}
+.title-main{font-weight:900;font-size:clamp(40px,13vw,66px);line-height:1.02;letter-spacing:.06em;
+  text-shadow:0 3px 24px rgba(0,0,0,.6);margin:0;}
+.title-sub{font-weight:500;font-size:clamp(15px,4.4vw,20px);letter-spacing:.3em;margin:10px 0 0;color:var(--amber2);}
+.speaker{margin-top:18px;font-size:14px;letter-spacing:.14em;color:#f0e6d8;opacity:.92;}
+.speaker b{color:#fff;font-weight:700;}
+.cta{margin-top:28px;border:0;cursor:pointer;
+  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;
+  font-family:"Noto Sans TC";font-weight:900;font-size:19px;letter-spacing:.1em;
+  padding:16px 34px;border-radius:999px;
+  box-shadow:0 10px 26px rgba(245,182,65,.4),inset 0 1px 0 rgba(255,255,255,.6);
+  animation:pulse 2.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.cover-hint{margin-top:14px;font-size:12.5px;color:#e9dcc9;opacity:.8;letter-spacing:.08em;}
+
+/* ---------- CHECK-IN ---------- */
+#checkin{padding:64px 20px calc(30px + var(--safe-b));background:
+  radial-gradient(130% 80% at 50% -10%,#2a1d2e 0%,var(--bg) 60%);}
+.h-step{font-family:"Oswald";letter-spacing:.3em;color:var(--amber);font-size:12px;text-transform:uppercase;}
+.h-title{font-weight:900;font-size:26px;margin:6px 0 2px;}
+.h-desc{color:var(--muted);font-size:13.5px;margin-bottom:18px;}
+.search{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #4a3b4e;
+  background:#1d1622;color:var(--cream);font-size:16px;font-family:inherit;}
+.search::placeholder{color:#7d6c7f;}
+.gender-tabs{display:flex;gap:8px;margin:12px 0;}
+.gtab{flex:1;padding:9px;border-radius:999px;border:1px solid #4a3b4e;background:#1d1622;
+  color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;}
+.gtab.on{background:var(--amber);color:#3a2600;border-color:var(--amber);}
+.name-list{margin-top:8px;max-height:46dvh;overflow:auto;-webkit-overflow-scrolling:touch;
+  border-radius:14px;}
+.name-item{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:12px;
+  background:#1d1622;margin-bottom:7px;cursor:pointer;border:1px solid transparent;}
+.name-item:active{border-color:var(--amber);}
+.name-item .nm{font-weight:700;font-size:16px;}
+.name-item .qu{margin-left:auto;font-size:12px;color:#8f7d91;background:#2a1f30;
+  padding:2px 9px;border-radius:999px;}
+.name-item .dot{width:9px;height:9px;border-radius:50%;}
+.dot.q{background:#5aa9e6;} .dot.k{background:#ef83a6;}
+.empty{color:#7d6c7f;text-align:center;padding:24px;font-size:14px;}
+
+/* ---------- MACHINE ---------- */
+#machine{padding:60px 12px calc(26px + var(--safe-b));
+  background:radial-gradient(120% 60% at 50% 0%,#241020 0%,#140c16 60%);}
+.machine-cap{text-align:center;margin-bottom:12px;}
+.machine-cap .en{font-family:"Oswald";letter-spacing:.3em;font-size:11px;color:var(--amber);text-transform:uppercase;}
+.machine-cap .tw{font-weight:900;font-size:19px;margin-top:3px;}
+.machine-cap .tw small{display:block;font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:.05em;margin-top:3px;}
+
+.machine{width:min(94vw,440px);margin:0 auto;border-radius:26px;padding:14px 14px 20px;
+  background:linear-gradient(160deg,var(--machine1),var(--machine2) 60%,var(--machine-dark));
+  box-shadow:0 24px 50px rgba(0,0,0,.55),inset 0 2px 0 rgba(255,255,255,.18),inset 0 -8px 20px rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.08);}
+.sign{border-radius:16px;padding:12px 10px 13px;text-align:center;
+  background:linear-gradient(180deg,#141018,#241a28);box-shadow:inset 0 0 0 2px rgba(255,255,255,.06),inset 0 0 26px rgba(245,182,65,.18);}
+.sign .logo{font-family:"Oswald";font-style:italic;font-weight:700;font-size:clamp(34px,10vw,46px);
+  letter-spacing:.02em;line-height:1;color:#fff;
+  text-shadow:0 0 16px rgba(120,200,255,.55),0 2px 0 #2a6ea8;}
+.sign .logo span{color:var(--amber2);}
+.sign .cn{font-weight:700;font-size:13px;letter-spacing:.42em;color:#9fd0ff;margin-top:6px;}
+.sign .slo{font-size:12px;color:#ffd9a6;margin-top:7px;letter-spacing:.04em;}
+
+.glass{margin-top:14px;border-radius:16px;padding:12px;
+  background:linear-gradient(180deg,rgba(175,205,230,.16),rgba(120,150,185,.08));
+  box-shadow:inset 0 2px 10px rgba(255,255,255,.2),inset 0 -10px 20px rgba(0,0,0,.25);
+  border:1px solid rgba(255,255,255,.14);}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+/* 易開罐造型 */
+.can{position:relative;cursor:pointer;display:flex;flex-direction:column;min-height:196px;
+  transition:transform .12s;filter:drop-shadow(0 9px 12px rgba(0,0,0,.45));}
+.can:active{transform:scale(.96);}
+.can .lid{height:13px;margin:0 7px;border-radius:7px 7px 3px 3px;position:relative;z-index:2;
+  background:linear-gradient(180deg,#f3f3f3,#c9c9c9 46%,#9fa0a2 56%,#d7d7d7);
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(0,0,0,.45);}
+.can .lid:before{content:"";position:absolute;left:50%;top:3.5px;transform:translateX(-50%);
+  width:30%;height:5px;border-radius:999px;background:linear-gradient(#ececec,#a6a6a6);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.28);}
+.can .body{flex:1;border-radius:4px 4px 14px 14px;padding:12px 12px 11px;color:#fff;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(90deg,rgba(0,0,0,.34),rgba(0,0,0,0) 16%,rgba(255,255,255,.32) 50%,rgba(0,0,0,0) 84%,rgba(0,0,0,.34)),
+    linear-gradient(180deg,var(--c1),var(--c2));
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.32),inset 0 -10px 16px rgba(0,0,0,.26),inset 0 7px 7px rgba(0,0,0,.16);}
+.can .body:before{content:"";position:absolute;left:0;right:0;top:5px;height:2px;background:rgba(0,0,0,.13);}
+.can .no{font-family:"Oswald";font-weight:700;font-size:11.5px;opacity:.88;margin-top:5px;}
+.can .ttl{font-weight:900;font-size:24px;letter-spacing:.09em;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.35);}
+.can .q{font-size:11.5px;line-height:1.45;margin-top:9px;background:rgba(0,0,0,.18);border-radius:8px;
+  padding:6px 7px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.can .cap{font-size:10.5px;margin-top:8px;display:flex;align-items:center;gap:5px;opacity:.95;}
+.can .cap b{font-family:"Oswald";}
+.can .bar{height:4px;border-radius:999px;background:rgba(0,0,0,.3);flex:1;overflow:hidden;}
+.can .bar>i{display:block;height:100%;background:#fff;border-radius:999px;}
+.can.soldout{filter:drop-shadow(0 6px 10px rgba(0,0,0,.4)) saturate(.22) brightness(.72);pointer-events:none;}
+.can.soldout .body{--c1:#3a3440;--c2:#272230;color:#8a8090;}
+.sold-band{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;}
+.sold-band span{transform:rotate(-11deg);font-family:"Oswald";font-weight:700;font-style:italic;
+  font-size:20px;letter-spacing:.06em;color:#ff6b6b;border:3px solid #ff6b6b;border-radius:8px;
+  padding:4px 12px;background:rgba(20,16,24,.72);text-transform:uppercase;}
+.can.mine .body{outline:3px solid var(--amber);outline-offset:-3px;}
+.can.mine .lid{background:linear-gradient(180deg,#fff,var(--amber) 60%,#d79a1e);}
+
+.slot{margin-top:14px;height:16px;border-radius:7px;background:#1a1016;
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.7);}
+.dispense{margin-top:10px;border-radius:12px;height:46px;background:#1a1016;
+  box-shadow:inset 0 3px 10px rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;
+  color:#6f6472;font-size:12px;letter-spacing:.1em;}
+
+/* ---------- PICKED / WAITING ---------- */
+#picked{padding:40px 24px calc(30px + var(--safe-b));min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(120% 70% at 50% 20%,#241020,#120c16 65%);}
+.mycan{width:150px;height:210px;border-radius:20px;position:relative;
+  background:linear-gradient(165deg,var(--c1),var(--c2));
+  box-shadow:0 20px 40px rgba(0,0,0,.5),inset 0 3px 0 rgba(255,255,255,.4),inset 0 -12px 20px rgba(0,0,0,.3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;
+  border:1px solid rgba(255,255,255,.2);animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+.mycan .ttl{font-weight:900;font-size:30px;letter-spacing:.08em;}
+.mycan .flav{font-size:13px;opacity:.9;margin-top:4px;}
+.mycan .no{font-family:"Oswald";font-weight:700;position:absolute;top:12px;left:0;right:0;opacity:.8;}
+.waitmsg{margin-top:26px;font-weight:700;font-size:18px;}
+.waitsub{margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.7;}
+.dots:after{content:'';animation:dots 1.4s steps(4,end) infinite;}
+@keyframes dots{0%{content:''}25%{content:'·'}50%{content:'··'}75%{content:'···'}}
+
+/* ---------- REVEAL / OPEN CAN ---------- */
+#reveal{padding:0;min-height:100dvh;background:radial-gradient(120% 80% at 50% 10%,#2a1522,#0f0a14 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px 24px calc(34px + var(--safe-b));position:relative;overflow:hidden;}
+.open-stage{height:230px;display:flex;align-items:center;justify-content:center;position:relative;}
+.ocan{width:130px;height:190px;border-radius:18px;position:relative;
+  background:linear-gradient(165deg,var(--c1),var(--c2));
+  box-shadow:0 18px 36px rgba(0,0,0,.5),inset 0 3px 0 rgba(255,255,255,.4),inset 0 -12px 20px rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.2);transform:scale(.3);opacity:0;}
+.ocan.in{animation:canin .5s cubic-bezier(.2,1.4,.4,1) forwards;}
+@keyframes canin{to{transform:scale(1);opacity:1}}
+.ocan.shake{animation:shake .5s ease 2;}
+@keyframes shake{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-5px) rotate(-3deg)}
+  40%{transform:translateX(5px) rotate(3deg)}60%{transform:translateX(-4px) rotate(-2deg)}80%{transform:translateX(4px) rotate(2deg)}}
+.ocan .lid{position:absolute;top:-8px;left:12px;right:12px;height:14px;border-radius:6px;
+  background:linear-gradient(#dcdcdc,#aeaeae);box-shadow:0 1px 2px rgba(0,0,0,.4);transform-origin:left;}
+.ocan .lid.pop{animation:lidpop .4s ease forwards;}
+@keyframes lidpop{to{transform:rotate(-26deg) translateY(-6px)}}
+.ocan .ttl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:30px;color:#fff;letter-spacing:.08em;}
+.fizz{position:absolute;bottom:40%;left:50%;width:8px;height:8px;border-radius:50%;
+  background:rgba(255,245,220,.9);opacity:0;}
+.fizz.go{animation:fizz 1s ease-out forwards;}
+@keyframes fizz{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(.3)}}
+.reveal-q{opacity:0;transform:translateY(10px);font-size:15px;color:var(--amber2);
+  letter-spacing:.04em;max-width:30ch;margin:4px auto 0;}
+.reveal-badge{font-family:"Oswald";letter-spacing:.3em;font-size:11px;color:var(--amber);
+  text-transform:uppercase;opacity:0;}
+.reveal-title{font-weight:900;font-size:30px;letter-spacing:.1em;margin:4px 0;opacity:0;}
+.reveal-answer{font-family:"Noto Serif TC",serif;font-weight:500;font-size:19px;line-height:2;
+  color:#fff;max-width:26ch;margin:18px auto 0;opacity:0;text-align:center;letter-spacing:.02em;}
+.reveal-src{color:var(--muted);font-size:13px;margin-top:14px;opacity:0;}
+.show{animation:risein .7s ease forwards;}
+@keyframes risein{to{opacity:1;transform:none}}
+.reveal-cta{margin-top:30px;opacity:0;border:0;cursor:pointer;
+  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;
+  font-weight:900;font-size:17px;letter-spacing:.08em;padding:14px 30px;border-radius:999px;
+  box-shadow:0 10px 24px rgba(245,182,65,.35);}
+
+/* ---------- DISCUSS (placeholder stage 3) ---------- */
+#discuss{padding:64px 20px calc(40px + var(--safe-b));}
+.card{background:#1d1622;border:1px solid #3a2d40;border-radius:16px;padding:16px 16px 18px;margin-bottom:14px;}
+.card h3{margin:0 0 10px;font-size:14px;color:var(--amber);letter-spacing:.1em;}
+.q-answer{font-family:"Noto Serif TC",serif;font-size:17px;line-height:1.95;color:#fff;}
+.q-src{color:var(--muted);font-size:12.5px;margin-top:8px;}
+.cand{border-top:1px dashed #3a2d40;padding:11px 0;}
+.cand:first-of-type{border-top:0;}
+.cand .orig{font-family:"Noto Serif TC",serif;font-size:15px;color:#ffe9c9;line-height:1.7;}
+.cand .bai{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.6;}
+.soon{background:#211a27;border:1px dashed #4a3b4e;border-radius:14px;padding:16px;text-align:center;
+  color:#9a89a0;font-size:13px;line-height:1.7;}
+
+/* ---------- UPLOAD (stage 3) ---------- */
+.upbtn{display:block;text-align:center;border:2px dashed #5a4760;border-radius:14px;padding:18px;
+  color:var(--amber2);font-weight:700;background:#201826;cursor:pointer;}
+.upbtn small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:4px;}
+.upfiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.upf{position:relative;border-radius:10px;overflow:hidden;background:#140f19;border:1px solid #3a2d40;}
+.upf img{width:100%;height:96px;object-fit:cover;display:block;}
+.upf .pdf{height:96px;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.upf .nm{font-size:10.5px;padding:4px 6px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.upf .pr{position:absolute;left:0;bottom:0;height:3px;background:var(--amber);width:0;}
+
+/* ---------- SCORING (stage 4) ---------- */
+#score{padding:64px 20px calc(40px + var(--safe-b));}
+.cur-banner{border-radius:16px;padding:16px;margin-bottom:16px;color:#fff;
+  background:linear-gradient(135deg,var(--c1,#333),var(--c2,#222));box-shadow:0 8px 20px rgba(0,0,0,.35);}
+.cur-banner .no{font-family:"Oswald";font-size:12px;opacity:.85;}
+.cur-banner .t{font-weight:900;font-size:24px;letter-spacing:.06em;}
+.cur-banner .q{font-size:13px;opacity:.92;margin-top:4px;}
+.srow{background:#1d1622;border:1px solid #3a2d40;border-radius:14px;padding:13px 14px;margin-bottom:12px;}
+.srow .lab{font-weight:700;font-size:15px;margin-bottom:9px;}
+.stars{display:flex;gap:6px;justify-content:space-between;max-width:260px;}
+.star{font-size:36px;line-height:1;cursor:pointer;color:#4a3b4e;transition:transform .1s;}
+.star.on{color:var(--amber);text-shadow:0 0 12px rgba(245,182,65,.5);} .star:active{transform:scale(1.25);}
+.submit-score{width:100%;border:0;border-radius:999px;padding:15px;font-weight:900;font-size:17px;
+  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;cursor:pointer;margin-top:4px;}
+.submit-score.done{background:#223a2b;color:#8fe0a8;}
+.self-note{background:#2a1f30;border:1px solid #4a3b4e;border-radius:14px;padding:26px 16px;text-align:center;
+  color:var(--amber2);font-size:17px;font-weight:700;line-height:1.7;}
+.notes-box{width:100%;min-height:90px;background:#1d1622;border:1px solid #3a2d40;border-radius:12px;
+  color:var(--cream);padding:12px;font-family:inherit;font-size:14px;resize:vertical;}
+
+/* ---------- RESULT (stage 5) ---------- */
+#result{padding:64px 20px calc(40px + var(--safe-b));}
+.rank{display:flex;align-items:center;gap:12px;background:#1d1622;border:1px solid #3a2d40;
+  border-radius:12px;padding:12px 14px;margin-bottom:9px;}
+.rank.mine{border-color:var(--amber);background:#241c2a;box-shadow:0 0 0 1px var(--amber);}
+.rank .m{font-size:22px;font-weight:900;width:34px;text-align:center;}
+.rank .nm{font-weight:700;} .rank .nm small{color:var(--muted);font-weight:400;display:block;font-size:11px;}
+.rank .pt{margin-left:auto;font-family:"Oswald";font-size:20px;color:var(--amber);}
+
+/* ---------- demo controls ---------- */
+.demo{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + var(--safe-b));z-index:50;
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.demo button{background:rgba(20,14,22,.9);color:#ffd27a;border:1px solid #6a4a2a;
+  font-size:11.5px;padding:8px 12px;border-radius:999px;cursor:pointer;backdrop-filter:blur(6px);}
+.demo .tagd{align-self:center;color:#8a7a60;font-size:10.5px;letter-spacing:.1em;}
+</style>
+</head>
+<body>
+<div class="topbar" id="topbar">
+  <span class="who" id="whoName"></span>
+  <span class="tag" id="whoTag" style="display:none"></span>
+</div>
+
+<div class="app">
+  <!-- 0. COVER -->
+  <section id="cover" class="screen on">
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <div class="kodawari"><div class="en">SOULDRY &nbsp;·&nbsp; SOUL REFRESH</div></div>
+      <h1 class="title-main" id="covTitle">修道解惑所</h1>
+      <div class="title-sub" id="covSub">那些你想問的事</div>
+      <div class="speaker">主講 &nbsp;·&nbsp; <b id="covSpk">林瑋揚</b></div>
+      <button class="cta" id="startBtn">報到入場</button>
+      <div class="cover-hint">掃碼入場 · 選一罐靈魂飲料</div>
+    </div>
+  </section>
+
+  <!-- 0b. CHECK-IN -->
+  <section id="checkin" class="screen">
+    <div class="h-step">STEP 1 · 報到</div>
+    <div class="h-title">你是誰？</div>
+    <div class="h-desc">在名單中找到自己（可搜尋姓名）</div>
+    <input class="search" id="nameSearch" placeholder="輸入姓名關鍵字…" autocomplete="off">
+    <div class="gender-tabs">
+      <div class="gtab on" data-g="all">全部</div>
+      <div class="gtab" data-g="乾">乾</div>
+      <div class="gtab" data-g="坤">坤</div>
+    </div>
+    <div class="name-list" id="nameList"></div>
+  </section>
+
+  <!-- 1. MACHINE -->
+  <section id="machine" class="screen">
+    <div class="machine-cap">
+      <div class="en">STEP 2 · 選一罐道理</div>
+      <div class="tw">靈魂解渴販賣機<small>先搶先贏 · 額滿完售 · 每人一罐</small></div>
+    </div>
+    <div class="machine">
+      <div class="sign">
+        <div class="logo brandfont">SOUL<span>DRY</span></div>
+        <div class="cn">靈魂解渴販賣機</div>
+        <div class="slo">解靈魂的渴，來一罐道理吧！</div>
+      </div>
+      <div class="glass"><div class="grid" id="canGrid"></div></div>
+      <div class="slot"></div>
+      <div class="dispense">↓ 取出口 ↓</div>
+    </div>
+  </section>
+
+  <!-- 2a. PICKED / WAITING -->
+  <section id="picked" class="screen">
+    <div class="mycan" id="myCan">
+      <div class="no brandfont" id="myCanNo"></div>
+      <div class="ttl" id="myCanTtl"></div>
+      <div class="flav" id="myCanFlav"></div>
+    </div>
+    <div class="waitmsg">你選到了！第 <span id="myGroupNo"></span> 組</div>
+    <div class="waitsub">等主持人按下開罐鈕<span class="dots"></span><br>就會揭曉你這罐的道理</div>
+  </section>
+
+  <!-- 2b. REVEAL -->
+  <section id="reveal" class="screen">
+    <div class="open-stage">
+      <div class="ocan" id="oCan">
+        <div class="lid" id="oLid"></div>
+        <div class="ttl" id="oTtl"></div>
+      </div>
+    </div>
+    <div class="reveal-q" id="rQ"></div>
+    <div style="margin-top:18px">
+      <div class="reveal-badge" id="rBadge"></div>
+      <div class="reveal-title" id="rTitle"></div>
+    </div>
+    <div class="reveal-answer" id="rAnswer"></div>
+    <div class="reveal-src" id="rSrc"></div>
+    <button class="reveal-cta" id="rCta">進入小組討論 →</button>
+  </section>
+
+  <!-- 3. DISCUSS (placeholder) -->
+  <section id="discuss" class="screen">
+    <div class="h-step">STEP 3 · 小組討論</div>
+    <div class="h-title" id="dTitle"></div>
+    <div class="h-desc" id="dQ"></div>
+    <div class="card">
+      <h3>你們這罐的道理</h3>
+      <div class="q-answer" id="dAnswer"></div>
+      <div class="q-src" id="dSrc"></div>
+    </div>
+    <div class="card">
+      <h3>可挑一句當演示焦點</h3>
+      <div id="dCands"></div>
+    </div>
+    <div class="card">
+      <h3>上傳作品（圖片／PDF）</h3>
+      <label class="upbtn" for="upInput">＋ 點我上傳<small>照片、簡報截圖或 PDF，可多張 · 單檔 ≤20MB</small></label>
+      <input id="upInput" type="file" accept="image/*,application/pdf" multiple hidden>
+      <div class="upfiles" id="upFiles"></div>
+    </div>
+    <div class="soon" id="discussWait">等主持人開始「上台報告」，就會進入評分 🎤</div>
+  </section>
+
+  <!-- 4. SCORE -->
+  <section id="score" class="screen">
+    <div class="h-step">STEP 4 · 互相評分</div>
+    <div class="h-title">為上台這組打分</div>
+    <div id="scoreBody"></div>
+    <div class="card"><h3>我的心得筆記</h3>
+      <div class="h-desc" style="margin:0 0 6px">只有你自己看得到，隨手記下體悟</div>
+      <textarea class="notes-box" id="notesBox" placeholder="寫下你的體悟、金句、想法…"></textarea>
+    </div>
+  </section>
+
+  <!-- 5. RESULT -->
+  <section id="result" class="screen">
+    <div class="h-step">STEP 5 · 成績揭曉</div>
+    <div class="h-title">道不遠人，人自遠之</div>
+    <div class="h-desc" id="rMine"></div>
+    <div id="rankList" style="margin-top:12px"></div>
+  </section>
+</div>
+
+<!-- demo controls (開發測試用，正式上線移除) -->
+<div class="demo" id="demoBar">
+  <span class="tagd">DEMO</span>
+  <button id="dOpen">▶ 模擬主持人開罐</button>
+  <button id="dReset">↻ 重置名額</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="roster.js"></script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const DRINKS=window.DRINKS, ROSTER=window.ROSTER||[], CAP=window.GROUP_CAP||15, C=window.COURSE;
+  const LS={ get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+            set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}} };
+  let me=null, myDrink=null;
+
+  /* ---------- Firebase (fallback to DEMO/localStorage if not configured) ---------- */
+  let db=null, USE_FB=false, liveCounts={};
+  try{
+    const cfg=window.FIREBASE_CONFIG;
+    if(cfg && window.firebase && cfg.apiKey && !/PASTE|XXXX/.test(cfg.apiKey)){
+      firebase.initializeApp(cfg); db=firebase.database(); USE_FB=true;
+      db.ref('groups').on('value',s=>{ const v=s.val()||{}; liveCounts={};
+        Object.keys(v).forEach(k=>liveCounts[k]=(v[k]&&v[k].count)||0);
+        if($('#machine').classList.contains('on')) renderCans(); });
+      db.ref('phase').on('value',s=>onPhase(parseInt(s.val(),10)||0));
+      console.log('[SOULDRY] Firebase connected.');
+    } else { console.log('[SOULDRY] DEMO mode (no Firebase config).'); }
+  }catch(e){ console.warn('[SOULDRY] Firebase init failed → DEMO mode',e); USE_FB=false; }
+  function getCounts(){ return USE_FB?liveCounts:counts(); }
+  function onPhase(ph){ window.__phase=ph;
+    if(!myDrink) return;
+    if(ph<=2){ if($('#picked').classList.contains('on')) goReveal(); return; }
+    if(ph===3) goDiscuss();
+    else if(ph===4) goScore();
+    else if(ph===5) goResult();
+  }
+
+  // cover text
+  $('#covTitle').textContent=C.title; $('#covSub').textContent=C.subtitle; $('#covSpk').textContent=C.speaker;
+
+  function show(id){ $$('.screen').forEach(s=>s.classList.remove('on')); $('#'+id).classList.add('on');
+    window.scrollTo(0,0);
+    const tb=$('#topbar'); if(me && id!=='cover'){tb.classList.add('on');} else {tb.classList.remove('on');}
+  }
+
+  /* demo seat counts: {drinkId:count} in localStorage */
+  function counts(){ return LS.get('souldry_counts',{}); }
+  function setCounts(c){ LS.set('souldry_counts',c); }
+
+  /* ---------- CHECK-IN ---------- */
+  let gFilter='all';
+  function renderNames(){
+    const kw=$('#nameSearch').value.trim();
+    let list=ROSTER.filter(p=> (gFilter==='all'||p.gender===gFilter) && (!kw||p.name.includes(kw)) );
+    const box=$('#nameList');
+    if(!list.length){ box.innerHTML='<div class="empty">找不到，換個關鍵字試試</div>'; return; }
+    box.innerHTML=list.slice(0,60).map(p=>`
+      <div class="name-item" data-id="${p.id}">
+        <span class="dot ${p.gender==='乾'?'q':'k'}"></span>
+        <span class="nm">${p.name}</span>
+        <span class="qu">${p.qu||''}${p.bie||''}</span>
+      </div>`).join('');
+    $$('#nameList .name-item').forEach(el=>el.onclick=()=>{
+      me=ROSTER.find(x=>x.id==el.dataset.id);
+      $('#whoName').textContent=me.name+'　'+(me.qu||'')+(me.bie||'');
+      LS.set('souldry_me',me);
+      if(USE_FB){ try{ db.ref('checkins/'+me.id).set({name:me.name,gender:me.gender||'',
+        ts:firebase.database.ServerValue.TIMESTAMP}); }catch(e){} }
+      goMachine();
+    });
+  }
+  $('#nameSearch').addEventListener('input',renderNames);
+  $$('.gtab').forEach(t=>t.onclick=()=>{ $$('.gtab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on'); gFilter=t.dataset.g; renderNames(); });
+
+  /* ---------- MACHINE ---------- */
+  function goMachine(){ renderCans(); show('machine'); }
+  function renderCans(){
+    const c=getCounts();
+    $('#canGrid').innerHTML=DRINKS.map(d=>{
+      const n=c[d.id]||0, full=n>=CAP, mine=myDrink&&myDrink.id===d.id;
+      return `<div class="can ${full?'soldout':''} ${mine?'mine':''}" data-id="${d.id}"
+        style="--c1:${shade(d.color,18)};--c2:${shade(d.color,-22)}">
+        <div class="lid"></div>
+        <div class="body">
+          <div class="no">No.${String(d.id).padStart(2,'0')} · ${d.book}</div>
+          <div class="ttl">${d.title}</div>
+          <div class="q">${d.question}</div>
+          <div class="cap"><span class="bar"><i style="width:${Math.min(100,n/CAP*100)}%"></i></span>
+            <b>${full?'FULL':n+'/'+CAP}</b></div>
+        </div>
+        ${full?'<div class="sold-band"><span>Sold Out</span></div>':''}
+      </div>`;
+    }).join('');
+    $$('#canGrid .can').forEach(el=>{ if(el.classList.contains('soldout'))return;
+      el.onclick=()=>pick(+el.dataset.id); });
+  }
+  function pick(id){
+    const d=DRINKS.find(x=>x.id===id);
+    if((getCounts()[id]||0)>=CAP){ renderCans(); return; }
+    if(!confirm(`選擇「${d.title}」這一罐？\n${d.question}\n\n（選了就不能換喔）`)) return;
+    if(USE_FB){
+      db.ref('groups/'+id+'/count').transaction(cur=>{ if((cur||0)>=CAP) return; return (cur||0)+1; },
+        (err,committed)=>{
+          if(err){ alert('連線出了點狀況，再試一次'); return; }
+          if(!committed){ alert('這一罐剛好完售了，換一罐吧！'); renderCans(); return; }
+          const key='p'+(me.id||Date.now());
+          db.ref('players/'+key).set({name:me.name,qu:me.qu||'',bie:me.bie||'',
+            gender:me.gender||'',groupId:id,title:d.title,ts:firebase.database.ServerValue.TIMESTAMP});
+          myDrink=d; LS.set('souldry_mydrink',id); goPicked();
+        });
+    } else {
+      const c=counts(); if((c[id]||0)>=CAP){ renderCans(); return; }
+      c[id]=(c[id]||0)+1; setCounts(c); myDrink=d; LS.set('souldry_mydrink',id); goPicked();
+    }
+  }
+
+  /* ---------- PICKED ---------- */
+  function goPicked(){
+    const d=myDrink;
+    const myCan=$('#myCan'); myCan.style.setProperty('--c1',shade(d.color,18));
+    myCan.style.setProperty('--c2',shade(d.color,-22));
+    $('#myCanNo').textContent='No.'+String(d.id).padStart(2,'0');
+    $('#myCanTtl').textContent=d.title; $('#myCanFlav').textContent=d.flavor;
+    $('#myGroupNo').textContent=d.id;
+    $('#whoTag').style.display='inline-block'; $('#whoTag').textContent='第'+d.id+'組 '+d.title;
+    show('picked');
+    if(USE_FB && (window.__phase||0)>=2) setTimeout(goReveal,400);
+  }
+
+  /* ---------- REVEAL (open-can animation) ---------- */
+  function goReveal(){
+    const d=myDrink; if(!d)return;
+    const oc=$('#oCan'); oc.style.setProperty('--c1',shade(d.color,18)); oc.style.setProperty('--c2',shade(d.color,-22));
+    $('#oTtl').textContent=d.title;
+    $('#rBadge').textContent='No.'+String(d.id).padStart(2,'0')+' · '+d.book;
+    $('#rTitle').textContent=d.title; $('#rQ').textContent='「'+d.question+'」';
+    $('#rAnswer').textContent=d.answer; $('#rSrc').textContent=d.source;
+    // reset anim
+    ['rQ','rBadge','rTitle','rAnswer','rSrc','rCta'].forEach(i=>$('#'+i).classList.remove('show'));
+    const lid=$('#oLid'); lid.classList.remove('pop'); oc.classList.remove('in','shake');
+    show('reveal');
+    void oc.offsetWidth; oc.classList.add('in');
+    setTimeout(()=>oc.classList.add('shake'),520);
+    setTimeout(()=>{ lid.classList.add('pop'); fizz(); },1400);
+    setTimeout(()=>$('#rQ').classList.add('show'),1700);
+    setTimeout(()=>{$('#rBadge').classList.add('show');$('#rTitle').classList.add('show');},2100);
+    setTimeout(()=>$('#rAnswer').classList.add('show'),2600);
+    setTimeout(()=>$('#rSrc').classList.add('show'),3200);
+    setTimeout(()=>$('#rCta').classList.add('show'),3500);
+  }
+  function fizz(){ const stage=$('.open-stage');
+    for(let i=0;i<14;i++){ const b=document.createElement('span'); b.className='fizz';
+      b.style.left=(42+Math.random()*16)+'%'; b.style.bottom='52%';
+      b.style.width=b.style.height=(5+Math.random()*7)+'px';
+      stage.appendChild(b); setTimeout(()=>b.classList.add('go'),i*40);
+      setTimeout(()=>b.remove(),1400+i*40);
+    } }
+
+  /* ---------- DISCUSS + UPLOAD (stage 3) ---------- */
+  let upSubbed=null;
+  function goDiscuss(){ const d=myDrink; if(!d)return;
+    $('#dTitle').textContent='第'+d.id+'組 · '+d.title;
+    $('#dQ').textContent='「'+d.question+'」';
+    $('#dAnswer').textContent=d.answer; $('#dSrc').textContent=d.source;
+    $('#dCands').innerHTML=d.candidates.map(c=>`<div class="cand">
+      <div class="orig">${c[0]}</div><div class="bai">${c[1]}</div></div>`).join('');
+    subscribeUploads(d.id);
+    show('discuss');
+  }
+  function subscribeUploads(gid){
+    if(!USE_FB){ $('#upFiles').innerHTML='<div class="h-desc" style="grid-column:1/-1">上傳需正式網址或本機伺服器</div>'; return; }
+    if(upSubbed && upSubbed!==gid) db.ref('uploads/'+upSubbed).off();
+    upSubbed=gid;
+    db.ref('uploads/'+gid).on('value',s=>renderUploads(s.val()||{}));
+  }
+  function renderUploads(obj){
+    $('#upFiles').innerHTML=Object.values(obj).map(f=>`<div class="upf">
+      ${(f.type||'').includes('pdf')?`<a class="pdf" href="${f.url}" target="_blank">📄</a>`:`<img src="${f.url}">`}
+      <div class="nm">${f.name||''}</div></div>`).join('');
+  }
+  function doUpload(files){
+    if(!USE_FB){ alert('上傳需要連上 Firebase：請用正式網址或本機伺服器開啟，不能用檔案直接開。'); return; }
+    const gid=myDrink.id;
+    [...files].forEach(file=>{
+      if(file.size>20*1024*1024){ alert(file.name+'：超過 20MB'); return; }
+      const key=db.ref('uploads/'+gid).push().key;
+      const ref=firebase.storage().ref('uploads/'+gid+'/'+key+'_'+file.name);
+      const holder=document.createElement('div'); holder.className='upf';
+      holder.innerHTML=((file.type||'').includes('pdf')?'<div class="pdf">📄</div>':'')+'<div class="nm">上傳中…</div><div class="pr"></div>';
+      $('#upFiles').prepend(holder);
+      const task=ref.put(file);
+      task.on('state_changed',snap=>{ holder.querySelector('.pr').style.width=(snap.bytesTransferred/snap.totalBytes*100)+'%'; },
+        err=>{ holder.querySelector('.nm').textContent='失敗'; alert('上傳失敗：'+err.message); },
+        ()=>{ ref.getDownloadURL().then(url=>{ holder.remove();
+          db.ref('uploads/'+gid+'/'+key).set({url,name:file.name,type:file.type||'',by:(me&&me.name)||'',ts:Date.now()}); }); });
+    });
+  }
+
+  /* ---------- SCORING (stage 4) ---------- */
+  const SQ=[['講解經典原文，有讓你聽懂','q1'],['延伸的體悟讓你覺得也有啟發','q2'],['演示內容你覺得很有創意','q3']];
+  let scoreGid=null, scoreSubbed=false, myScore={q1:0,q2:0,q3:0};
+  function goScore(){ show('score'); loadNotes();
+    if(USE_FB){ if(!scoreSubbed){ scoreSubbed=true; db.ref('current/group').on('value',s=>renderScore(+s.val()||1)); }
+      else renderScore(scoreGid||1); }
+    else renderScore(1);
+  }
+  function renderScore(gid){ scoreGid=gid;
+    const d=DRINKS.find(x=>x.id===gid), body=$('#scoreBody');
+    if(myDrink && gid===myDrink.id){
+      body.innerHTML='<div class="self-note">🎤 現在是你們這組上台！<br>加油，無法評自己組</div>'; return; }
+    myScore={q1:0,q2:0,q3:0};
+    body.innerHTML=`<div class="cur-banner" style="--c1:${shade(d.color,16)};--c2:${shade(d.color,-24)}">
+        <div class="no">No.${String(d.id).padStart(2,'0')} · ${d.book}</div>
+        <div class="t">第${d.id}組 · ${d.title}</div><div class="q">「${d.question}」</div></div>`
+      + SQ.map(([lab,k])=>`<div class="srow"><div class="lab">${lab}</div>
+          <div class="stars" data-k="${k}">${[1,2,3,4,5].map(i=>`<span class="star" data-v="${i}">★</span>`).join('')}</div></div>`).join('')
+      + '<button class="submit-score" id="subScore">送出評分</button>';
+    body.querySelectorAll('.stars').forEach(row=>row.querySelectorAll('.star').forEach(st=>
+      st.onclick=()=>{ myScore[row.dataset.k]=+st.dataset.v; paintStars(); }));
+    $('#subScore').onclick=submitScore;
+    if(USE_FB && me) db.ref('scores/'+gid+'/p'+me.id).once('value',s=>{ const v=s.val();
+      if(v){ myScore={q1:v.q1||0,q2:v.q2||0,q3:v.q3||0}; paintStars(); markDone(); } });
+  }
+  function paintStars(){ document.querySelectorAll('#scoreBody .stars').forEach(row=>{
+    const v=myScore[row.dataset.k]||0; row.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',+st.dataset.v<=v)); }); }
+  function markDone(){ const b=$('#subScore'); if(b){ b.classList.add('done'); b.textContent='已送出 ✓（可修改後再送）'; } }
+  function submitScore(){
+    if(!myScore.q1||!myScore.q2||!myScore.q3){ alert('三題都要給星星喔'); return; }
+    if(!USE_FB){ alert('評分需連上 Firebase'); return; }
+    db.ref('scores/'+scoreGid+'/p'+me.id).set({q1:myScore.q1,q2:myScore.q2,q3:myScore.q3,by:me.name,ts:Date.now()}).then(markDone);
+  }
+  function loadNotes(){ const t=$('#notesBox'); if(!t)return; t.value=LS.get('souldry_notes','')||'';
+    t.oninput=()=>{ LS.set('souldry_notes',t.value); if(USE_FB&&me) db.ref('notes/p'+me.id).set({name:me.name,text:t.value,ts:Date.now()}); }; }
+
+  /* ---------- RESULT (stage 5) ---------- */
+  let resSub=false;
+  function goResult(){ show('result');
+    if(!resSub && USE_FB){ resSub=true; db.ref('scores').on('value',s=>renderResult(s.val()||{})); }
+    else if(!USE_FB) renderResult({});
+  }
+  function renderResult(scores){
+    const rows=DRINKS.map(d=>{ const sc=scores[d.id]||{}; let q1=0,q2=0,q3=0,n=0;
+      Object.values(sc).forEach(v=>{q1+=+v.q1||0;q2+=+v.q2||0;q3+=+v.q3||0;n++;});
+      return {d,total:q1+q2+q3,n};}).sort((a,b)=>b.total-a.total);
+    const med=['🥇','🥈','🥉'];
+    $('#rankList').innerHTML=rows.map((r,i)=>`<div class="rank ${myDrink&&r.d.id===myDrink.id?'mine':''}">
+      <div class="m">${med[i]||(i+1)}</div>
+      <div class="nm">第${r.d.id}組 · ${r.d.title}<small>${r.d.book} · ${r.n} 份評分</small></div>
+      <div class="pt">${r.total}</div></div>`).join('');
+    if(myDrink){ const mine=rows.findIndex(r=>r.d.id===myDrink.id);
+      $('#rMine').textContent='你的第'+myDrink.id+'組（'+myDrink.title+'）目前第 '+(mine+1)+' 名'; }
+  }
+
+  /* ---------- color helper ---------- */
+  function shade(hex,p){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255;
+    const f=x=>Math.max(0,Math.min(255,Math.round(x+(p/100)*255)));
+    return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+
+  /* ---------- wire ---------- */
+  $('#startBtn').onclick=()=>{ renderNames(); show('checkin'); };
+  $('#rCta').onclick=goDiscuss;
+  $('#upInput').onchange=e=>{ doUpload(e.target.files); e.target.value=''; };
+  $('#dOpen').onclick=()=>{ if(USE_FB){ db.ref('phase').set(2); }
+    else { if(myDrink) goReveal(); else alert('先選一罐飲料'); } };
+  $('#dReset').onclick=()=>{
+    if(USE_FB){ if(!confirm('清空雲端所有組別名額與報名？（測試用）'))return;
+      db.ref('groups').remove(); db.ref('players').remove(); db.ref('phase').set(0);
+      myDrink=null; LS.set('souldry_mydrink',null); alert('雲端已重置'); return; }
+    setCounts({}); myDrink=null; LS.set('souldry_mydrink',null);
+    alert('名額已重置（Demo）'); if($('#machine').classList.contains('on'))renderCans(); };
+
+  renderNames();
+
+  /* ---------- restore after refresh ---------- */
+  (function restore(){
+    const savedMe=LS.get('souldry_me',null), did=LS.get('souldry_mydrink',null);
+    if(savedMe){ me=savedMe; $('#whoName').textContent=me.name+'　'+(me.qu||'')+(me.bie||''); }
+    if(savedMe && did){ myDrink=DRINKS.find(d=>d.id===did)||null;
+      if(myDrink){ $('#whoTag').style.display='inline-block'; $('#whoTag').textContent='第'+myDrink.id+'組 '+myDrink.title;
+        goPicked(); } }
+  })();
+})();
+</script>
+</body>
+</html>

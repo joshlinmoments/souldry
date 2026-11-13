@@ -1,0 +1,11 @@
+# 原始素材 / 大檔，不上傳公開 repo
+*.pptx
+*.xlsx
+~$*
+.DS_Store
+
+# 名冊原始 JSON（姓名；網站只需 roster.js，不需再公開一份）
+assets/roster.json
+
+# 生圖暫存（主視覺已放 assets/shop-hero.png）
+slides/
