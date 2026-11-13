@@ -89,6 +89,14 @@ body{
 .name-item .dot{width:9px;height:9px;border-radius:50%;}
 .dot.q{background:#5aa9e6;} .dot.k{background:#ef83a6;}
 .empty{color:#7d6c7f;text-align:center;padding:24px;font-size:14px;}
+.custom-checkin{margin-top:14px;padding:14px;border:1px dashed #4a3b4e;border-radius:14px;background:#1a141f;}
+.cc-label{font-size:13px;color:var(--muted);margin-bottom:9px;}
+.cc-label b{color:#ffe9c9;}
+.cc-row{display:flex;gap:8px;}
+.cc-row .search{margin:0;flex:1;min-width:0;}
+.cc-btn{flex:0 0 auto;padding:0 16px;border-radius:999px;border:0;background:var(--amber);
+  color:#3a2600;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;}
+.cc-btn:active{transform:translateY(1px);}
 
 /* ---------- MACHINE ---------- */
 #machine{padding:60px 12px calc(26px + var(--safe-b));
@@ -305,6 +313,13 @@ body{
       <div class="gtab" data-g="坤">坤</div>
     </div>
     <div class="name-list" id="nameList"></div>
+    <div class="custom-checkin">
+      <div class="cc-label">名單中<b>找不到自己</b>？直接輸入姓名也能報到：</div>
+      <div class="cc-row">
+        <input class="search" id="customName" placeholder="輸入你的姓名…" autocomplete="off" maxlength="20">
+        <button class="cc-btn" id="customGo">以此報到</button>
+      </div>
+    </div>
   </section>
 
   <!-- 1. MACHINE -->
@@ -479,6 +494,21 @@ body{
   $('#nameSearch').addEventListener('input',renderNames);
   $$('.gtab').forEach(t=>t.onclick=()=>{ $$('.gtab').forEach(x=>x.classList.remove('on'));
     t.classList.add('on'); gFilter=t.dataset.g; renderNames(); });
+  /* 「其他」：不在名單上的人自行輸入姓名報到（id 穩定、重整不變） */
+  function customCheckin(){
+    const nm=$('#customName').value.trim();
+    if(!nm){ $('#customName').focus(); return; }
+    let cid=LS.get('souldry_cid',null);
+    if(!cid){ cid='x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); LS.set('souldry_cid',cid); }
+    me={id:cid,name:nm,gender:'',qu:'',bie:'',custom:true};
+    $('#whoName').textContent=me.name;
+    LS.set('souldry_me',me);
+    if(USE_FB){ try{ db.ref('checkins/'+me.id).set({name:me.name,gender:'',custom:true,
+      ts:firebase.database.ServerValue.TIMESTAMP}); }catch(e){} }
+    goMachine();
+  }
+  $('#customGo').onclick=customCheckin;
+  $('#customName').addEventListener('keydown',e=>{ if(e.key==='Enter')customCheckin(); });
 
   /* ---------- MACHINE ---------- */
   function goMachine(){ renderCans(); show('machine'); }
