@@ -165,9 +165,11 @@ td .medal{font-weight:900;}
   $('#filterGroup').innerHTML='<option value="all">全部組別</option>'+opts;
   $('#curGroup').innerHTML=opts;
   $('#filterGroup').onchange=renderPlayers;
-  $('#curGroup').onchange=()=>db.ref('current/group').set(+$('#curGroup').value);
+  // 切上台組別時一併寫入 startTs（主講大螢幕用來做「上台計時」正計時歸零）
+  function setCurrentGroup(g){ db.ref('current').update({group:g, startTs:firebase.database.ServerValue.TIMESTAMP}); }
+  $('#curGroup').onchange=()=>setCurrentGroup(+$('#curGroup').value);
   $('#prevG').onclick=()=>stepGroup(-1); $('#nextG').onclick=()=>stepGroup(1);
-  function stepGroup(d){ let g=(state.current.group||1)+d; g=Math.max(1,Math.min(10,g)); db.ref('current/group').set(g); }
+  function stepGroup(d){ let g=(state.current.group||1)+d; g=Math.max(1,Math.min(10,g)); setCurrentGroup(g); }
   $('#scoreOpen').onchange=()=>db.ref('current/scoringOpen').set($('#scoreOpen').checked);
   $('#lockSel').onchange=()=>db.ref('locks/selection').set($('#lockSel').checked);
 

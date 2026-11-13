@@ -97,21 +97,36 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
 .uptag{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:clamp(13px,1.2vw,18px);}
 .uptag.done{background:rgba(76,175,109,.18);border-color:var(--green);color:#9be8b3;}
 
-/* PRESENT (4) */
-#s4 .cur-head{display:flex;align-items:baseline;gap:18px;}
+/* PRESENT (4) — 左半：經典＋作品；右半：心得彈幕 */
+#s4 .cur-head{display:flex;align-items:baseline;gap:18px;width:54%;}
 #s4 .cur-no{font-family:"Oswald";font-size:clamp(24px,3vw,46px);color:var(--amber);}
 #s4 .cur-ttl{font-weight:900;font-size:clamp(34px,5vw,74px);letter-spacing:.05em;}
 #s4 .cur-q{color:var(--amber2);font-size:clamp(16px,1.8vw,26px);margin-top:4px;}
-#s4 .body{flex:1;display:flex;gap:3vw;margin-top:2vh;min-height:0;}
-#s4 .quote{flex:1;display:flex;align-items:center;}
+#s4 .cur-timer{margin-left:auto;font-family:"Oswald";font-weight:700;font-size:clamp(28px,3.4vw,54px);
+  color:#fff;letter-spacing:.04em;line-height:1;display:flex;align-items:center;gap:.4vw;}
+#s4 .cur-timer:before{content:'⏱';font-size:.7em;opacity:.8;}
+#s4 .cur-timer.warn{color:#ffcf6b;}
+#s4 .body{flex:1;display:flex;flex-direction:column;gap:1.6vh;margin-top:2vh;min-height:0;width:54%;}
+#s4 .quote{flex:1;display:flex;align-items:center;min-height:0;overflow:auto;}
 #s4 .quote p{font-family:"Noto Serif TC",serif;font-size:clamp(22px,2.6vw,44px);line-height:1.9;}
-#s4 .works{width:40%;display:flex;flex-direction:column;gap:12px;overflow:auto;}
-#s4 .works img,#s4 .works embed,#s4 .works iframe{width:100%;border-radius:12px;background:#000;}
-#s4 .works .nowork{color:var(--muted);text-align:center;padding:40px 0;border:1px dashed var(--line);border-radius:12px;}
+#s4 .works{flex:0 0 auto;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding-bottom:4px;}
+#s4 .works img,#s4 .works embed,#s4 .works iframe{height:26vh;width:auto;border-radius:12px;background:#000;flex:0 0 auto;}
+#s4 .works .nowork{color:var(--muted);text-align:center;padding:24px 40px;border:1px dashed var(--line);border-radius:12px;white-space:nowrap;}
 #s4 .scoreprog{position:fixed;bottom:18px;left:22px;font-size:clamp(14px,1.4vw,20px);color:var(--muted);}
+/* 心得彈幕：固定在畫面右半，往左飄 */
+#danmaku{position:fixed;top:0;right:0;width:46vw;height:100vh;overflow:hidden;pointer-events:none;z-index:40;display:none;}
+#danmaku.on{display:block;}
+#danmaku:before{content:'大家的心得';position:absolute;top:14px;right:22px;color:var(--muted);
+  font-size:clamp(12px,1.1vw,16px);letter-spacing:.3em;opacity:.5;}
+.dm{position:absolute;left:0;white-space:nowrap;will-change:transform;
+  font-size:clamp(18px,1.8vw,30px);font-weight:700;color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,.85),0 0 4px rgba(0,0,0,.7);
+  background:rgba(22,14,26,.42);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:7px 18px;}
+.dm .nm{color:var(--amber2);font-weight:800;margin-right:10px;font-size:.82em;}
 
 /* AWARDS (5) */
-#s5{justify-content:center;align-items:center;text-align:center;}
+#s5{justify-content:center;align-items:center;text-align:center;
+  background:linear-gradient(rgba(10,7,14,.74),rgba(10,7,14,.84)),url('assets/shop-hero.png') center/cover;}
 #s5 .champ{margin-bottom:3vh;}
 #s5 .champ .en{font-size:clamp(14px,1.4vw,20px);}
 #s5 .champ .name{font-weight:900;font-size:clamp(46px,8vw,120px);letter-spacing:.05em;color:var(--amber);}
@@ -175,13 +190,15 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
 <!-- 4 PRESENT -->
 <section id="s4" class="stage">
   <div class="cur-head"><span class="cur-no" id="curNo"></span>
-    <span><div class="cur-ttl" id="curTtl"></div><div class="cur-q" id="curQ"></div></span></div>
+    <span><div class="cur-ttl" id="curTtl"></div><div class="cur-q" id="curQ"></div></span>
+    <span class="cur-timer" id="curTimer">00:00</span></div>
   <div class="body">
     <div class="quote"><p class="serif" id="curQuote"></p></div>
     <div class="works" id="curWorks"></div>
   </div>
   <div class="scoreprog" id="s4prog"></div>
 </section>
+<div id="danmaku"></div>
 
 <!-- 5 AWARDS -->
 <section id="s5" class="stage">
@@ -209,7 +226,7 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
   try{ new QRCode($('#qr'),{text:PLAYER_URL,width:230,height:230,colorDark:'#2a1810',colorLight:'#fff4e2'});
        new QRCode($('#qr2'),{text:PLAYER_URL,width:92,height:92,colorDark:'#2a1810',colorLight:'#fff4e2'});}catch(e){}
 
-  let db,state={phase:0,groups:{},players:{},checkins:{},scores:{},current:{},timer:{},uploads:{}};
+  let db,serverOffset=0,state={phase:0,groups:{},players:{},checkins:{},scores:{},current:{},timer:{},uploads:{},notes:{}};
   try{ firebase.initializeApp(window.FIREBASE_CONFIG); db=firebase.database();
     db.ref('phase').on('value',s=>{state.phase=+s.val()||0;render();});
     db.ref('groups').on('value',s=>{state.groups=s.val()||{};render();});
@@ -219,7 +236,10 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
     db.ref('current').on('value',s=>{state.current=s.val()||{};render();});
     db.ref('uploads').on('value',s=>{state.uploads=s.val()||{};render();});
     db.ref('timer').on('value',s=>{state.timer=s.val()||{};});
+    db.ref('notes').on('value',s=>{state.notes=s.val()||{};});
+    db.ref('.info/serverTimeOffset').on('value',s=>{serverOffset=s.val()||0;});
   }catch(e){console.error(e);}
+  const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   function show(n){ $$('.stage').forEach(s=>s.classList.remove('on')); const el=$('#s'+n); if(el)el.classList.add('on');
     $('#pbadge').textContent='PHASE '+n; }
@@ -238,6 +258,8 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
     if(ph===3) renderUploadsProg();
     if(ph===4) renderPresent();
     if(ph===5) renderAwards();
+    // 心得彈幕只在演示(4)出現
+    const dm=$('#danmaku'); if(dm){ if(ph===4){ dm.classList.add('on'); startDanmaku(); } else { dm.classList.remove('on'); stopDanmaku(); } }
   }
 
   function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
@@ -300,14 +322,41 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
       return `<div class="awcard"><div class="lab">${lab}</div>
         <div class="g">${w&&w[k]>0?'第'+w.d.id+'組 '+w.d.title:'—'}</div>
         <div class="pts">${w&&w[k]>0?w[k]+' ★':''}</div></div>`;}).join('');
-    $('#closing').innerHTML=C.closing+'<small>THANK YOU · 修道解惑所</small>';
+    $('#closing').innerHTML='<small>THANK YOU · 修道解惑所</small>';
   }
 
-  // timer tick
-  setInterval(()=>{ if(state.phase!==3)return; const t=state.timer||{}; let ms=t.running?((t.endTs||0)-Date.now()):(t.remain||0);
-    ms=Math.max(0,ms); const m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60;
-    const el=$('#bigTimer'); el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-    el.classList.toggle('warn',ms<=60000); },400);
+  const pad=n=>String(n).padStart(2,'0');
+  // timer tick：phase 3 倒數（討論）、phase 4 正計時（上台）
+  setInterval(()=>{
+    if(state.phase===3){ const t=state.timer||{}; let ms=t.running?((t.endTs||0)-Date.now()):(t.remain||0);
+      ms=Math.max(0,ms); const el=$('#bigTimer'); if(el){ el.textContent=pad(Math.floor(ms/60000))+':'+pad(Math.floor(ms/1000)%60);
+        el.classList.toggle('warn',ms<=60000); } }
+    else if(state.phase===4){ const st=state.current.startTs; const el=$('#curTimer'); if(!el)return;
+      if(st){ let ms=Math.max(0,(Date.now()+serverOffset)-st);
+        el.textContent=pad(Math.floor(ms/60000))+':'+pad(Math.floor(ms/1000)%60);
+        el.classList.toggle('warn',ms>=3*60000); } else el.textContent='00:00'; }
+  },400);
+
+  /* ---------- 心得彈幕（phase 4，只飄右半） ---------- */
+  let dmTimer=null,dmIdx=0;
+  function notesList(){ return Object.values(state.notes||{}).filter(n=>n&&String(n.text||'').trim()); }
+  function spawnDanmaku(n){
+    const lane=$('#danmaku'); if(!lane)return;
+    const el=document.createElement('div'); el.className='dm';
+    el.innerHTML=(n.name?`<span class="nm">${esc(n.name)}</span>`:'')+esc(n.text);
+    lane.appendChild(el);
+    const laneW=lane.clientWidth,laneH=lane.clientHeight,elW=el.offsetWidth||200;
+    const rows=Math.max(3,Math.floor(laneH/70)); const row=Math.floor(Math.random()*rows);
+    el.style.top=Math.round(row*(laneH/rows)+10)+'px';
+    const dur=9000+Math.random()*5000;
+    const anim=el.animate([{transform:`translateX(${laneW}px)`},{transform:`translateX(${-elW-20}px)`}],
+      {duration:dur,easing:'linear'});
+    anim.onfinish=()=>el.remove();
+  }
+  function startDanmaku(){ if(dmTimer)return;
+    dmTimer=setInterval(()=>{ const list=notesList(); if(!list.length)return;
+      spawnDanmaku(list[dmIdx%list.length]); dmIdx++; },1900); }
+  function stopDanmaku(){ if(dmTimer){clearInterval(dmTimer);dmTimer=null;} const lane=$('#danmaku'); if(lane)lane.innerHTML=''; }
 })();
 </script>
 </body>
