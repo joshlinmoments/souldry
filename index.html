@@ -431,6 +431,8 @@ body{
       console.log('[SOULDRY] Firebase connected.');
     } else { console.log('[SOULDRY] DEMO mode (no Firebase config).'); }
   }catch(e){ console.warn('[SOULDRY] Firebase init failed → DEMO mode',e); USE_FB=false; }
+  /* 正式（Firebase 連線）時隱藏 DEMO 控制列：玩家手機不應出現「模擬開罐／重置名額」等主持人動作 */
+  if(USE_FB){ const _demo=document.getElementById('demoBar'); if(_demo) _demo.style.display='none'; }
   function getCounts(){ return USE_FB?liveCounts:counts(); }
   function onPhase(ph){ window.__phase=ph;
     if(!myDrink) return;
