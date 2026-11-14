@@ -118,25 +118,36 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
   color:#fff;letter-spacing:.04em;line-height:1;display:flex;align-items:center;gap:.4vw;}
 #s4 .cur-timer:before{content:'⏱';font-size:.7em;opacity:.8;}
 #s4 .cur-timer.warn{color:#ffcf6b;}
-#s4 .body{flex:1;display:flex;gap:3vw;margin-top:2vh;min-height:0;}
-#s4 .quote{flex:1;display:flex;align-items:center;min-height:0;overflow:auto;}
-#s4 .quote p{font-family:"Noto Serif TC",serif;font-size:clamp(22px,2.6vw,44px);line-height:1.9;white-space:pre-line;}
-#s4 .works{width:36%;display:flex;flex-direction:column;gap:12px;overflow:auto;}
-#s4 .works img,#s4 .works embed,#s4 .works iframe{width:100%;border-radius:12px;background:#000;}
-#s4 .works .nowork{color:var(--muted);text-align:center;padding:40px 0;border:1px dashed var(--line);border-radius:12px;}
+/* 報告投影片：第1頁經典，其後各頁為上傳作品，可左右換頁 */
+#s4 .deck{flex:1;display:flex;align-items:center;gap:1.2vw;margin-top:1.5vh;min-height:0;}
+#s4 .slide{flex:1;height:100%;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;}
+#s4 .slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;}
+#s4 .slide embed{width:100%;height:100%;border-radius:12px;background:#000;}
+#s4 .slide .qpage{text-align:center;max-width:94%;}
+#s4 .slide .qz{font-family:"Noto Serif TC",serif;font-size:clamp(24px,2.9vw,50px);line-height:1.9;white-space:pre-line;color:#fff;}
+#s4 .slide .qsrc{color:var(--amber2);font-size:clamp(14px,1.5vw,24px);margin-top:2.2vh;letter-spacing:.05em;}
+#s4 .slide .nowork{color:var(--muted);font-size:clamp(16px,1.6vw,24px);border:1px dashed var(--line);border-radius:14px;padding:4vh 6vw;}
+#s4 .nav{flex:0 0 auto;width:clamp(46px,4vw,72px);height:clamp(46px,4vw,72px);border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;font-size:clamp(26px,2.6vw,44px);
+  line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+#s4 .nav:hover{background:rgba(255,255,255,.18);}
+#s4 .nav:disabled{opacity:.18;cursor:default;}
+#s4 .deck-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:1.2vh;}
+#s4 .deck-dots{display:flex;gap:9px;}
+#s4 .deck-dots i{width:10px;height:10px;border-radius:50%;background:#3a3440;}
+#s4 .deck-dots i.on{background:var(--amber);}
+#s4 .deck-page{font-family:"Oswald";color:var(--muted);font-size:clamp(13px,1.2vw,18px);letter-spacing:.04em;}
 #s4 .scoreprog{position:fixed;bottom:18px;left:22px;font-size:clamp(14px,1.4vw,20px);color:var(--muted);}
 /* 心得彈幕：整個畫面最上層、靠右、由下往上、每則顯示一次後消失 */
 #danmaku{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:90;display:none;}
 #danmaku.on{display:block;}
-.dm{position:absolute;right:2.5vw;top:0;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis;
-  will-change:transform,opacity;font-size:clamp(13px,1.15vw,20px);font-weight:700;color:#fff;
-  text-shadow:0 2px 12px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.8);
-  background:rgba(22,14,26,.5);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:4px 14px;}
-.dm .nm{color:var(--amber2);font-weight:800;margin-right:8px;font-size:.82em;}
-.dm.big{font-size:clamp(24px,2.6vw,46px);font-weight:900;padding:8px 24px;
-  background:linear-gradient(180deg,rgba(245,182,65,.34),rgba(245,182,65,.16));
-  border-color:rgba(245,182,65,.75);box-shadow:0 6px 26px rgba(245,182,65,.45);}
-.dm.big .nm{color:#fff3d6;}
+.dm{position:absolute;right:2.5vw;top:0;white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;
+  will-change:transform,opacity;font-size:clamp(15px,1.3vw,24px);font-weight:700;color:#fff;
+  text-shadow:0 2px 10px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.95);}
+.dm .nm{color:var(--amber2);font-weight:800;margin-right:8px;}
+.dm.big{font-size:clamp(28px,3vw,54px);font-weight:900;color:#ffe08a;
+  text-shadow:0 2px 16px rgba(0,0,0,.95),0 0 20px rgba(245,182,65,.6),0 0 4px rgba(0,0,0,.95);}
+.dm.big .nm{color:#fff;}
 
 /* AWARDS (5) */
 #s5{justify-content:center;align-items:center;text-align:center;
@@ -215,10 +226,12 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
   <div class="cur-head"><span class="cur-no" id="curNo"></span>
     <span><div class="cur-ttl" id="curTtl"></div><div class="cur-q" id="curQ"></div></span>
     <span class="cur-timer" id="curTimer">00:00</span></div>
-  <div class="body">
-    <div class="quote"><p class="serif" id="curQuote"></p></div>
-    <div class="works" id="curWorks"></div>
+  <div class="deck">
+    <button class="nav" id="deckPrev" aria-label="上一頁">‹</button>
+    <div class="slide" id="deckSlide"></div>
+    <button class="nav" id="deckNext" aria-label="下一頁">›</button>
   </div>
+  <div class="deck-bar"><div class="deck-dots" id="deckDots"></div><div class="deck-page" id="deckPage"></div></div>
   <div class="scoreprog" id="s4prog"></div>
 </section>
 <div id="danmaku"></div>
@@ -315,19 +328,39 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
       const up=state.uploads[d.id],n=up?Object.keys(up).length:0;
       return `<span class="uptag ${n?'done':''}">第${d.id}組 ${d.title}${n?' ✓'+n:' …'}</span>`;}).join('');
   }
+  let deckSlides=[], deckIdx=0, deckGroup=null, deckSig='';
   function renderPresent(){
     const g=state.current.group||1,d=DRINKS.find(x=>x.id===g);if(!d)return;
     $('#curNo').textContent='No.'+String(d.id).padStart(2,'0')+' · 第'+d.id+'組';
     $('#curTtl').textContent=d.title; $('#curQ').textContent='「'+d.question+'」';
-    $('#curQuote').textContent=d.answer;
-    const up=state.uploads[g]; const works=$('#curWorks');
-    if(up){ works.innerHTML=Object.values(up).map(f=>{
-      if((f.type||'').includes('pdf'))return `<embed src="${f.url}" type="application/pdf" height="420">`;
-      return `<img src="${f.url}" alt="">`;}).join(''); }
-    else works.innerHTML='<div class="nowork">（這組尚未上傳作品）</div>';
+    const ups=state.uploads[g]?Object.values(state.uploads[g]):[];
+    const sig=g+'|'+ups.map(f=>f.url).join('|');
+    if(sig!==deckSig){ deckSig=sig;   // 只有組別或作品真的變了才重建投影片，避免重載圖片
+      deckSlides=[{type:'quote',d:d}].concat(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url})));
+      if(deckGroup!==g){ deckGroup=g; deckIdx=0; }           // 換組自動回到第1頁（經典）
+      if(deckIdx>=deckSlides.length) deckIdx=deckSlides.length-1;
+      if(deckIdx<0) deckIdx=0;
+      renderSlide();
+    }
     const nn=Object.keys(state.scores[g]||{}).length;
     $('#s4prog').textContent=`第${g}組 · 已收到 ${nn} 份評分`;
   }
+  function renderSlide(){
+    const s=deckSlides[deckIdx], el=$('#deckSlide'); if(!el)return;
+    if(!s){ el.innerHTML='<div class="nowork">（這組尚未上傳作品）</div>'; }
+    else if(s.type==='quote'){ el.innerHTML=`<div class="qpage"><p class="qz">${esc(s.d.answer)}</p><div class="qsrc">${esc(s.d.source)}</div></div>`; }
+    else if(s.type==='pdf'){ el.innerHTML=`<embed src="${s.url}" type="application/pdf">`; }
+    else{ el.innerHTML=`<img src="${s.url}" alt="">`; }
+    $('#deckDots').innerHTML=deckSlides.map((_,i)=>`<i class="${i===deckIdx?'on':''}"></i>`).join('');
+    $('#deckPage').textContent=(deckIdx+1)+' / '+deckSlides.length+(deckIdx===0?'　· 經典':'　· 作品');
+    $('#deckPrev').disabled=deckIdx<=0;
+    $('#deckNext').disabled=deckIdx>=deckSlides.length-1;
+  }
+  function deckGo(dir){ if(!deckSlides.length)return; const n=deckIdx+dir; if(n<0||n>=deckSlides.length)return; deckIdx=n; renderSlide(); }
+  $('#deckPrev').onclick=()=>deckGo(-1);
+  $('#deckNext').onclick=()=>deckGo(1);
+  document.addEventListener('keydown',e=>{ if(state.phase!==4)return;
+    if(e.key==='ArrowLeft')deckGo(-1); else if(e.key==='ArrowRight')deckGo(1); });
   function tally(){
     return DRINKS.map(d=>{const sc=state.scores[d.id]||{};let q1=0,q2=0,q3=0,n=0;
       Object.values(sc).forEach(v=>{q1+=+v.q1||0;q2+=+v.q2||0;q3+=+v.q3||0;n++;});

@@ -266,8 +266,14 @@ body{
 .dm-input input{flex:1;min-width:0;background:#1d1622;border:1px solid #4a3b4e;border-radius:12px;
   color:var(--cream);padding:12px 14px;font-family:inherit;font-size:16px;}
 .dm-send{flex:0 0 auto;border:0;border-radius:12px;padding:0 18px;font-weight:800;font-size:15px;
-  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;cursor:pointer;}
+  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;cursor:pointer;transition:box-shadow .2s,background .2s;}
 .dm-send:active{transform:translateY(1px);}
+/* 集氣滿：送出鈕金亮、輸入框發光 */
+.dm-send.hot{background:linear-gradient(180deg,#ffe8a0,#f5b019);box-shadow:0 0 20px rgba(245,182,65,.75);}
+.dm-input input.glow{border-color:var(--amber);animation:noteGlow 1.1s ease-in-out infinite alternate;}
+@keyframes noteGlow{
+  from{box-shadow:0 0 0 2px rgba(245,182,65,.3),0 0 10px rgba(245,182,65,.35);}
+  to{box-shadow:0 0 0 2px rgba(245,182,65,.6),0 0 26px rgba(245,182,65,.8);}}
 .note-meter{margin-top:9px;font-size:13px;color:var(--muted);min-height:1.3em;transition:color .2s;}
 .note-meter b{color:#ffd27a;}
 .note-meter.charged{color:#ffd27a;font-weight:700;}
@@ -688,7 +694,11 @@ body{
   /* 玩家心得送出（phase 4）：手機只提供輸入，內容即時 push 到 /notes，由大螢幕彈幕顯示一次後消失。
      集氣：每送 5 則，下一則變成「加大粗體」彈幕。 */
   let noteWired=false, noteCount=0, charged=false, flashT=null;
-  function refreshMeter(){ const m=$('#noteMeter'); if(!m||m.dataset.flash==='1')return;
+  function refreshMeter(){ const m=$('#noteMeter');
+    const inp=$('#noteInput'), btn=$('#noteSend');
+    if(inp) inp.classList.toggle('glow',charged);
+    if(btn){ btn.classList.toggle('hot',charged); btn.textContent=charged?'⚡ 送出':'送出'; }
+    if(!m||m.dataset.flash==='1')return;
     if(charged){ m.classList.add('charged'); m.innerHTML='⚡ <b>集氣完成！</b>下一則會放大送出'; }
     else { m.classList.remove('charged');
       const bars=[0,1,2,3,4].map(i=>`<i class="${i<noteCount?'on':''}"></i>`).join('');
