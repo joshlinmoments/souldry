@@ -81,11 +81,15 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
 .center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .huge{font-weight:900;font-size:clamp(40px,7vw,96px);letter-spacing:.06em;text-align:center;}
 .huge .accent{color:var(--amber);}
-.zgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;width:100%;margin-top:3vh;}
-.zcard{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:1.4vw;text-align:center;}
-.zcard .zone{font-family:"Oswald";font-size:clamp(22px,2.6vw,40px);font-weight:700;color:var(--amber2);}
-.zcard .gno{font-size:clamp(12px,1vw,15px);color:var(--muted);}
-.zcard .gt{font-weight:900;font-size:clamp(18px,1.9vw,28px);margin-top:3px;}
+/* 2 欄 × 5 列，依序左右排：第1組左、第2組右、第3組左… */
+.zgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4vh 2.4vw;width:100%;max-width:1180px;margin:3vh auto 0;}
+.zcard{display:flex;align-items:center;gap:1.6vw;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);border-radius:14px;padding:1.1vh 1.8vw;text-align:left;}
+.zcard .zone{font-family:"Oswald";font-size:clamp(30px,3.4vw,54px);font-weight:700;color:var(--amber2);
+  flex:0 0 auto;min-width:1.4em;text-align:center;line-height:1;}
+.zcard .zinfo{min-width:0;}
+.zcard .gt{font-weight:900;font-size:clamp(20px,2.1vw,34px);line-height:1.15;}
+.zcard .gno{font-size:clamp(12px,1vw,16px);color:var(--muted);margin-top:3px;}
 
 /* TIMER (3) */
 #s3 .timer{font-family:"Oswald";font-weight:700;font-size:clamp(90px,24vw,360px);line-height:1;
@@ -283,8 +287,9 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
   }
   function renderZones(){
     $('#zgrid').innerHTML=DRINKS.map((d,i)=>`<div class="zcard">
-      <div class="zone">分區 ${ZONES[i]}</div><div class="gno">第${d.id}組 · ${d.book}</div>
-      <div class="gt">${d.title}</div></div>`).join('');
+      <div class="zone">${ZONES[i]}</div>
+      <div class="zinfo"><div class="gt">第${d.id}組 · ${d.title}</div>
+        <div class="gno">分區 ${ZONES[i]} · ${d.book}</div></div></div>`).join('');
   }
   function renderUploadsProg(){
     // timer handled by interval; uploads progress tags
