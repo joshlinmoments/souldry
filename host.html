@@ -110,33 +110,37 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
 .uptag.done{background:rgba(76,175,109,.18);border-color:var(--green);color:#9be8b3;}
 
 /* PRESENT (4) — 經典＋作品全寬；彈幕獨立浮在最上層 */
-#s4 .cur-head{display:flex;align-items:baseline;gap:18px;}
-#s4 .cur-no{font-family:"Oswald";font-size:clamp(24px,3vw,46px);color:var(--amber);}
-#s4 .cur-ttl{font-weight:900;font-size:clamp(34px,5vw,74px);letter-spacing:.05em;}
-#s4 .cur-q{color:var(--amber2);font-size:clamp(16px,1.8vw,26px);margin-top:4px;}
-#s4 .cur-timer{margin-left:auto;font-family:"Oswald";font-weight:700;font-size:clamp(28px,3.4vw,54px);
+#s4 .cur-head{display:flex;align-items:baseline;gap:14px;}
+#s4 .cur-no{font-family:"Oswald";font-size:clamp(16px,1.9vw,28px);color:var(--amber);}
+#s4 .cur-ttl{font-weight:900;font-size:clamp(22px,3vw,44px);letter-spacing:.04em;}
+#s4 .cur-q{color:var(--amber2);font-size:clamp(12px,1.25vw,18px);margin-top:2px;}
+#s4 .cur-timer{margin-left:auto;font-family:"Oswald";font-weight:700;font-size:clamp(20px,2.4vw,38px);
   color:#fff;letter-spacing:.04em;line-height:1;display:flex;align-items:center;gap:.4vw;}
 #s4 .cur-timer:before{content:'⏱';font-size:.7em;opacity:.8;}
 #s4 .cur-timer.warn{color:#ffcf6b;}
-/* 報告投影片：第1頁經典，其後各頁為上傳作品，可左右換頁 */
-#s4 .deck{flex:1;display:flex;align-items:center;gap:1.2vw;margin-top:1.5vh;min-height:0;}
-#s4 .slide{flex:1;height:100%;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;}
-#s4 .slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;}
-#s4 .slide embed{width:100%;height:100%;border-radius:12px;background:#000;}
-#s4 .slide .qpage{text-align:center;max-width:94%;}
-#s4 .slide .qz{font-family:"Noto Serif TC",serif;font-size:clamp(24px,2.9vw,50px);line-height:1.9;white-space:pre-line;color:#fff;}
-#s4 .slide .qsrc{color:var(--amber2);font-size:clamp(14px,1.5vw,24px);margin-top:2.2vh;letter-spacing:.05em;}
-#s4 .slide .nowork{color:var(--muted);font-size:clamp(16px,1.6vw,24px);border:1px dashed var(--line);border-radius:14px;padding:4vh 6vw;}
-#s4 .nav{flex:0 0 auto;width:clamp(46px,4vw,72px);height:clamp(46px,4vw,72px);border-radius:50%;
-  background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;font-size:clamp(26px,2.6vw,44px);
+/* 簡報投影片（s4 報告／s6 講道理共用）：可左右換頁 */
+.deck{flex:1;display:flex;align-items:center;gap:1.2vw;margin-top:1vh;min-height:0;}
+.slide{flex:1;height:100%;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;}
+.slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;}
+.slide embed{width:100%;height:100%;border-radius:12px;background:#000;}
+.slide .qpage{text-align:center;max-width:94%;}
+.slide .qz{font-family:"Noto Serif TC",serif;font-size:clamp(26px,3.2vw,56px);line-height:1.9;white-space:pre-line;color:#fff;}
+.slide .qsrc{color:var(--amber2);font-size:clamp(14px,1.6vw,26px);margin-top:2.4vh;letter-spacing:.05em;}
+.slide .nowork{color:var(--muted);font-size:clamp(16px,1.7vw,26px);border:1px dashed var(--line);border-radius:14px;padding:4vh 6vw;}
+.nav{flex:0 0 auto;width:clamp(44px,3.6vw,66px);height:clamp(44px,3.6vw,66px);border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;font-size:clamp(24px,2.4vw,40px);
   line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
-#s4 .nav:hover{background:rgba(255,255,255,.18);}
-#s4 .nav:disabled{opacity:.18;cursor:default;}
-#s4 .deck-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:1.2vh;}
-#s4 .deck-dots{display:flex;gap:9px;}
-#s4 .deck-dots i{width:10px;height:10px;border-radius:50%;background:#3a3440;}
-#s4 .deck-dots i.on{background:var(--amber);}
-#s4 .deck-page{font-family:"Oswald";color:var(--muted);font-size:clamp(13px,1.2vw,18px);letter-spacing:.04em;}
+.nav:hover{background:rgba(255,255,255,.18);}
+.nav:disabled{opacity:.18;cursor:default;}
+.deck-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:1vh;}
+.deck-dots{display:flex;gap:9px;}
+.deck-dots i{width:10px;height:10px;border-radius:50%;background:#3a3440;}
+.deck-dots i.on{background:var(--amber);}
+.deck-page{font-family:"Oswald";color:var(--muted);font-size:clamp(13px,1.2vw,18px);letter-spacing:.04em;}
+/* s6 講道理 */
+#s6 .talk-head{display:flex;align-items:baseline;gap:14px;}
+#s6 .talk-ttl{font-weight:900;font-size:clamp(22px,3vw,44px);letter-spacing:.04em;color:var(--amber);}
+#s6 .talk-sub{color:var(--amber2);font-size:clamp(12px,1.25vw,18px);}
 #s4 .scoreprog{position:fixed;bottom:18px;left:22px;font-size:clamp(14px,1.4vw,20px);color:var(--muted);}
 /* 心得彈幕：整個畫面最上層、靠右、由下往上、每則顯示一次後消失 */
 #danmaku{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:90;display:none;}
