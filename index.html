@@ -281,6 +281,12 @@ body{
 .note-meter .bars{display:inline-flex;gap:4px;vertical-align:-2px;margin-left:6px;}
 .note-meter .bars i{width:16px;height:7px;border-radius:3px;background:#3a2d40;display:inline-block;}
 .note-meter .bars i.on{background:var(--amber);}
+/* 講道理聆聽畫面 */
+#talk .talk-wrap{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px 28px;}
+.talk-emoji{font-size:66px;margin-bottom:14px;animation:talkb 2.4s ease-in-out infinite;}
+@keyframes talkb{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#talk .h-desc{line-height:1.9;font-size:16px;}
 
 /* ---------- RESULT (stage 5) ---------- */
 #result{padding:64px 20px calc(40px + var(--safe-b));}
@@ -432,6 +438,16 @@ body{
     <div class="h-desc" id="rMine"></div>
     <div id="rankList" style="margin-top:12px"></div>
   </section>
+
+  <!-- 6. TALK -->
+  <section id="talk" class="screen">
+    <div class="talk-wrap">
+      <div class="talk-emoji">🙏</div>
+      <div class="h-step">PHASE 6 · 講道理時間</div>
+      <div class="h-title" style="margin-top:6px">講道理時間</div>
+      <div class="h-desc" style="margin-top:10px">請收起手機，靜心聆聽<br>看向大螢幕 ✨</div>
+    </div>
+  </section>
 </div>
 
 <!-- demo controls (開發測試用，正式上線移除) -->
@@ -472,6 +488,7 @@ body{
   if(USE_FB){ const _demo=document.getElementById('demoBar'); if(_demo) _demo.style.display='none'; }
   function getCounts(){ return USE_FB?liveCounts:counts(); }
   function onPhase(ph){ window.__phase=ph;
+    if(ph===6){ show('talk'); return; }   // 講道理時間：所有人進聆聽畫面
     if(!myDrink) return;
     if(ph===3){ goDiscuss(); return; }
     if(ph===4){ goScore(); return; }

@@ -248,6 +248,17 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
   <div class="closing" id="closing"></div>
 </section>
 
+<!-- 6 講道理時間 -->
+<section id="s6" class="stage">
+  <div class="talk-head"><span class="talk-ttl">講道理時間</span><span class="talk-sub">靜心聆聽</span></div>
+  <div class="deck">
+    <button class="nav" id="talkPrev" aria-label="上一頁">‹</button>
+    <div class="slide" id="talkSlide"></div>
+    <button class="nav" id="talkNext" aria-label="下一頁">›</button>
+  </div>
+  <div class="deck-bar"><div class="deck-dots" id="talkDots"></div><div class="deck-page" id="talkPage"></div></div>
+</section>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -297,6 +308,7 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
     if(ph===3) renderUploadsProg();
     if(ph===4) renderPresent();
     if(ph===5) renderAwards();
+    if(ph===6) renderTalk();
     // 心得彈幕只在演示(4)出現
     const dm=$('#danmaku'); if(dm){ if(ph===4){ dm.classList.add('on'); startDanmaku(); } else { dm.classList.remove('on'); stopDanmaku(); } }
   }
@@ -332,39 +344,54 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
       const up=state.uploads[d.id],n=up?Object.keys(up).length:0;
       return `<span class="uptag ${n?'done':''}">第${d.id}組 ${d.title}${n?' ✓'+n:' …'}</span>`;}).join('');
   }
-  let deckSlides=[], deckIdx=0, deckGroup=null, deckSig='';
+  // 可共用的簡報 deck（s4 報告 / s6 講道理）
+  function createDeck(sel){
+    const S={slides:[],idx:0,sig:'',key:null};
+    function paint(){
+      const s=S.slides[S.idx], el=$(sel.slide); if(!el)return;
+      if(!s){ el.innerHTML='<div class="nowork">'+(sel.empty||'（尚無內容）')+'</div>'; }
+      else if(s.type==='quote'){ el.innerHTML=`<div class="qpage"><p class="qz">${esc(s.d.answer)}</p><div class="qsrc">${esc(s.d.source)}</div></div>`; }
+      else if(s.type==='pdf'){ el.innerHTML=`<embed src="${s.url}" type="application/pdf">`; }
+      else{ el.innerHTML=`<img src="${s.url}" alt="">`; }
+      const n=S.slides.length;
+      $(sel.dots).innerHTML=S.slides.map((_,i)=>`<i class="${i===S.idx?'on':''}"></i>`).join('');
+      $(sel.page).textContent=n?((S.idx+1)+' / '+n+(sel.label?sel.label(S.idx):'')):'—';
+      $(sel.prev).disabled=S.idx<=0; $(sel.next).disabled=S.idx>=n-1;
+    }
+    return {
+      set(slides,key){
+        const sig=slides.map(s=>s.url||s.type).join('|');
+        if(sig===S.sig && key===S.key) return;   // 沒變就不重建，避免圖片重載
+        S.sig=sig; S.slides=slides;
+        if(key!==S.key){ S.key=key; S.idx=0; }    // 換組/換主題自動回第1頁
+        if(S.idx>=slides.length) S.idx=Math.max(0,slides.length-1);
+        paint();
+      },
+      go(dir){ if(!S.slides.length)return; const n=S.idx+dir; if(n<0||n>=S.slides.length)return; S.idx=n; paint(); }
+    };
+  }
+  const deck4=createDeck({slide:'#deckSlide',prev:'#deckPrev',next:'#deckNext',dots:'#deckDots',page:'#deckPage',
+    empty:'（這組尚未上傳作品）',label:i=>i===0?'　· 經典':'　· 作品'});
+  const deck6=createDeck({slide:'#talkSlide',prev:'#talkPrev',next:'#talkNext',dots:'#talkDots',page:'#talkPage',
+    empty:'（尚未上傳講道理投影片，請在後台上傳）',label:i=>'　· 投影片'});
   function renderPresent(){
     const g=state.current.group||1,d=DRINKS.find(x=>x.id===g);if(!d)return;
     $('#curNo').textContent='No.'+String(d.id).padStart(2,'0')+' · 第'+d.id+'組';
     $('#curTtl').textContent=d.title; $('#curQ').textContent='「'+d.question+'」';
     const ups=state.uploads[g]?Object.values(state.uploads[g]):[];
-    const sig=g+'|'+ups.map(f=>f.url).join('|');
-    if(sig!==deckSig){ deckSig=sig;   // 只有組別或作品真的變了才重建投影片，避免重載圖片
-      deckSlides=[{type:'quote',d:d}].concat(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url})));
-      if(deckGroup!==g){ deckGroup=g; deckIdx=0; }           // 換組自動回到第1頁（經典）
-      if(deckIdx>=deckSlides.length) deckIdx=deckSlides.length-1;
-      if(deckIdx<0) deckIdx=0;
-      renderSlide();
-    }
+    deck4.set([{type:'quote',d:d}].concat(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url}))), g);
     const nn=Object.keys(state.scores[g]||{}).length;
     $('#s4prog').textContent=`第${g}組 · 已收到 ${nn} 份評分`;
   }
-  function renderSlide(){
-    const s=deckSlides[deckIdx], el=$('#deckSlide'); if(!el)return;
-    if(!s){ el.innerHTML='<div class="nowork">（這組尚未上傳作品）</div>'; }
-    else if(s.type==='quote'){ el.innerHTML=`<div class="qpage"><p class="qz">${esc(s.d.answer)}</p><div class="qsrc">${esc(s.d.source)}</div></div>`; }
-    else if(s.type==='pdf'){ el.innerHTML=`<embed src="${s.url}" type="application/pdf">`; }
-    else{ el.innerHTML=`<img src="${s.url}" alt="">`; }
-    $('#deckDots').innerHTML=deckSlides.map((_,i)=>`<i class="${i===deckIdx?'on':''}"></i>`).join('');
-    $('#deckPage').textContent=(deckIdx+1)+' / '+deckSlides.length+(deckIdx===0?'　· 經典':'　· 作品');
-    $('#deckPrev').disabled=deckIdx<=0;
-    $('#deckNext').disabled=deckIdx>=deckSlides.length-1;
+  function renderTalk(){
+    const ups=state.uploads.talk?Object.values(state.uploads.talk):[];
+    deck6.set(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url})), 'talk');
   }
-  function deckGo(dir){ if(!deckSlides.length)return; const n=deckIdx+dir; if(n<0||n>=deckSlides.length)return; deckIdx=n; renderSlide(); }
-  $('#deckPrev').onclick=()=>deckGo(-1);
-  $('#deckNext').onclick=()=>deckGo(1);
-  document.addEventListener('keydown',e=>{ if(state.phase!==4)return;
-    if(e.key==='ArrowLeft')deckGo(-1); else if(e.key==='ArrowRight')deckGo(1); });
+  $('#deckPrev').onclick=()=>deck4.go(-1); $('#deckNext').onclick=()=>deck4.go(1);
+  $('#talkPrev').onclick=()=>deck6.go(-1); $('#talkNext').onclick=()=>deck6.go(1);
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return; const dir=e.key==='ArrowLeft'?-1:1;
+    if(state.phase===4)deck4.go(dir); else if(state.phase===6)deck6.go(dir); });
   function tally(){
     return DRINKS.map(d=>{const sc=state.scores[d.id]||{};let q1=0,q2=0,q3=0,n=0;
       Object.values(sc).forEach(v=>{q1+=+v.q1||0;q2+=+v.q2||0;q3+=+v.q3||0;n++;});
