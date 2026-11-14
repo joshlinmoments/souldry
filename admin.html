@@ -58,6 +58,8 @@ button.act{border:0;border-radius:10px;padding:10px 14px;font-weight:700;font-si
 .act.red{background:var(--red);color:#fff;} .act.ghost{background:var(--card2);color:var(--cream);border:1px solid var(--line);}
 .act.blue{background:var(--blue);color:#06202e;}
 .stat{font-family:"Oswald";font-size:15px;}
+.tbig{font-family:"Oswald";font-weight:700;font-size:clamp(44px,8vw,68px);line-height:1;
+  letter-spacing:.02em;color:var(--cream);margin:2px 0 12px;font-variant-numeric:tabular-nums;}
 select,input{background:var(--card2);color:var(--cream);border:1px solid var(--line);border-radius:9px;
   padding:9px 10px;font-family:inherit;font-size:14px;}
 .toggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;}
@@ -88,21 +90,10 @@ td .medal{font-weight:900;}
   <div class="phases" id="phases"></div>
 </div>
 
-<!-- 大螢幕翻頁（階段4 報告 / 階段6 講道理） -->
-<div class="sec">
-  <h2>大螢幕翻頁 <small>階段4 報告 ／ 階段6 講道理</small></h2>
-  <div class="row">
-    <button class="act ghost" id="deckPrev">‹ 上一頁</button>
-    <button class="act ghost" id="deckNext">下一頁 ›</button>
-    <span class="stat" id="deckPos" style="margin-left:auto">—</span>
-  </div>
-  <div class="hint">在這裡翻頁會同步到主講大螢幕（也可直接用大螢幕鍵盤 ← →）。</div>
-</div>
-
-<!-- 評分控制 ＋ 計時器（左右兩欄，同一列） -->
+<!-- 左欄：評分控制／大螢幕翻頁（同位切換）＋ 右欄：計時器 -->
 <div class="duo">
-  <!-- 報告 + 評分控制 -->
-  <div class="sec">
+  <!-- 報告 + 評分控制（階段6 時隱藏，換成大螢幕翻頁） -->
+  <div class="sec" id="secScore">
     <h2>報告 · 評分控制 <small>階段4</small></h2>
     <div class="row">
       <span>目前上台：</span>
@@ -112,15 +103,25 @@ td .medal{font-weight:900;}
     </div>
     <div class="hint" id="scoreProg"></div>
   </div>
+  <!-- 大螢幕翻頁（只在階段6 講道理出現，取代評分控制） -->
+  <div class="sec" id="secDeck" style="display:none">
+    <h2>大螢幕翻頁 <small>階段6 · 同步主講大螢幕</small></h2>
+    <div class="row">
+      <button class="act ghost" id="deckPrev">‹ 上一頁</button>
+      <button class="act ghost" id="deckNext">下一頁 ›</button>
+      <span class="stat" id="deckPos" style="margin-left:auto">—</span>
+    </div>
+    <div class="hint">翻頁會同步到主講大螢幕（也可直接用大螢幕鍵盤 ← →）。</div>
+  </div>
   <!-- 計時器 -->
   <div class="sec">
     <h2>討論計時器 <small>階段3</small></h2>
+    <div class="tbig" id="tshow">—</div>
     <div class="row">
       <button class="act green" data-min="20">開始 20:00</button>
       <button class="act ghost" data-min="5">5:00</button>
       <button class="act ghost" id="tplus">+1 分</button>
       <button class="act ghost" id="tpause">暫停/繼續</button>
-      <span class="stat" id="tshow">—</span>
     </div>
   </div>
 </div>
@@ -227,7 +228,11 @@ td .medal{font-weight:900;}
   }
 
   function renderPhase(){ $$('.phbtn').forEach(b=>b.classList.toggle('on',+b.dataset.p===state.phase));
-    $('#phLabel').textContent='目前：'+(PHASES[state.phase]?PHASES[state.phase][1]:'—'); }
+    $('#phLabel').textContent='目前：'+(PHASES[state.phase]?PHASES[state.phase][1]:'—');
+    // 階段6 講道理：大螢幕翻頁取代評分控制（同一欄位切換）
+    const talk=state.phase===6;
+    $('#secScore').style.display=talk?'none':'';
+    $('#secDeck').style.display=talk?'':'none'; }
 
   function renderSel(){
     let total=0;
