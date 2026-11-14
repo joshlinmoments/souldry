@@ -87,7 +87,6 @@ td .medal{font-weight:900;}
       <select id="curGroup"></select>
       <button class="act ghost" id="prevG">← 上一組</button>
       <button class="act ghost" id="nextG">下一組 →</button>
-      <label class="toggle" style="margin-left:auto"><input type="checkbox" id="scoreOpen"> 開放評分</label>
     </div>
     <div class="hint" id="scoreProg"></div>
   </div>
@@ -175,7 +174,6 @@ td .medal{font-weight:900;}
   $('#curGroup').onchange=()=>setCurrentGroup(+$('#curGroup').value);
   $('#prevG').onclick=()=>stepGroup(-1); $('#nextG').onclick=()=>stepGroup(1);
   function stepGroup(d){ let g=(state.current.group||1)+d; g=Math.max(1,Math.min(10,g)); setCurrentGroup(g); }
-  $('#scoreOpen').onchange=()=>db.ref('current/scoringOpen').set($('#scoreOpen').checked);
   $('#lockSel').onchange=()=>db.ref('locks/selection').set($('#lockSel').checked);
 
   // ---- listeners ----
@@ -229,7 +227,6 @@ td .medal{font-weight:900;}
 
   function renderCurrent(){
     if(state.current.group) $('#curGroup').value=state.current.group;
-    $('#scoreOpen').checked=!!state.current.scoringOpen;
     renderResults();
   }
 
