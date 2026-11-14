@@ -20,6 +20,9 @@ h1 .b{font-family:"Oswald";font-style:italic;color:var(--amber);letter-spacing:.
 .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
 .sec h2{font-size:13px;letter-spacing:.08em;color:var(--amber);margin:0 0 10px;text-transform:uppercase;}
 .sec h2 small{color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px;}
+.duo{display:flex;gap:14px;align-items:flex-start;}
+.duo>.sec{flex:1 1 0;min-width:0;margin-bottom:14px;}
+@media(max-width:720px){.duo{flex-wrap:wrap;}.duo>.sec{flex:1 1 100%;}}
 
 .phases{display:flex;flex-wrap:wrap;gap:8px;}
 .phbtn{flex:1;min-width:140px;border:1px solid var(--line);background:var(--card2);color:var(--cream);
@@ -74,6 +77,33 @@ td .medal{font-weight:900;}
   <div class="phases" id="phases"></div>
 </div>
 
+<!-- 評分控制 ＋ 計時器（左右兩欄，同一列） -->
+<div class="duo">
+  <!-- 報告 + 評分控制 -->
+  <div class="sec">
+    <h2>報告 · 評分控制 <small>階段4</small></h2>
+    <div class="row">
+      <span>目前上台：</span>
+      <select id="curGroup"></select>
+      <button class="act ghost" id="prevG">← 上一組</button>
+      <button class="act ghost" id="nextG">下一組 →</button>
+      <label class="toggle" style="margin-left:auto"><input type="checkbox" id="scoreOpen"> 開放評分</label>
+    </div>
+    <div class="hint" id="scoreProg"></div>
+  </div>
+  <!-- 計時器 -->
+  <div class="sec">
+    <h2>討論計時器 <small>階段3</small></h2>
+    <div class="row">
+      <button class="act green" data-min="20">開始 20:00</button>
+      <button class="act ghost" data-min="5">5:00</button>
+      <button class="act ghost" id="tplus">+1 分</button>
+      <button class="act ghost" id="tpause">暫停/繼續</button>
+      <span class="stat" id="tshow">—</span>
+    </div>
+  </div>
+</div>
+
 <!-- 選題監看 -->
 <div class="sec">
   <h2>選題監看 <small id="selTotal"></small></h2>
@@ -84,36 +114,11 @@ td .medal{font-weight:900;}
   <div class="grid" id="selGrid"></div>
 </div>
 
-<!-- 分組名單 / 手動調整 -->
+<!-- 分組名單 / 手動調整（移到成績結算上面） -->
 <div class="sec">
   <h2>分組名單 <small>可手動移組平衡人數</small></h2>
   <div class="row"><select id="filterGroup"></select><span class="stat" id="pcount"></span></div>
   <div class="plist" id="plist"></div>
-</div>
-
-<!-- 報告 + 評分控制 -->
-<div class="sec">
-  <h2>報告 · 評分控制 <small>階段4</small></h2>
-  <div class="row">
-    <span>目前上台：</span>
-    <select id="curGroup"></select>
-    <button class="act ghost" id="prevG">← 上一組</button>
-    <button class="act ghost" id="nextG">下一組 →</button>
-    <label class="toggle" style="margin-left:auto"><input type="checkbox" id="scoreOpen"> 開放評分</label>
-  </div>
-  <div class="hint" id="scoreProg"></div>
-</div>
-
-<!-- 計時器 -->
-<div class="sec">
-  <h2>討論計時器 <small>階段3</small></h2>
-  <div class="row">
-    <button class="act green" data-min="20">開始 20:00</button>
-    <button class="act ghost" data-min="5">5:00</button>
-    <button class="act ghost" id="tplus">+1 分</button>
-    <button class="act ghost" id="tpause">暫停/繼續</button>
-    <span class="stat" id="tshow">—</span>
-  </div>
 </div>
 
 <!-- 成績 -->
