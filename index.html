@@ -311,7 +311,7 @@ body{
       <div class="title-sub" id="covSub">那些你想問的事</div>
       <div class="speaker">主講 &nbsp;·&nbsp; <b id="covSpk">林瑋揚</b></div>
       <button class="cta" id="startBtn">報到入場</button>
-      <div class="cover-hint">掃碼入場 · 選一罐靈魂飲料</div>
+      <div class="cover-hint">掃碼入場 · 來一罐道理吧！</div>
     </div>
   </section>
 
@@ -752,7 +752,7 @@ body{
   $('#rCta').onclick=goDiscuss;
   $('#upInput').onchange=e=>{ doUpload(e.target.files); e.target.value=''; };
   $('#dOpen').onclick=()=>{ if(USE_FB){ db.ref('phase').set(2); }
-    else { if(myDrink) goReveal(); else alert('先選一罐飲料'); } };
+    else { if(myDrink) goReveal(); else alert('先選一罐道理吧！'); } };
   $('#dReset').onclick=()=>{
     if(USE_FB){ if(!confirm('清空雲端所有組別名額與報名？（測試用）'))return;
       db.ref('groups').remove(); db.ref('players').remove(); db.ref('phase').set(0);
