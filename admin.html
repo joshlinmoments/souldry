@@ -136,7 +136,7 @@ td .medal{font-weight:900;}
   <div class="row">
     <button class="act red" id="btnResetAll">⚠ 清空全部（選題/名單/分數/階段）</button>
   </div>
-  <div class="hint">活動結束或重新測試時使用。會刪除 groups / players / scores / uploads / current / phase。</div>
+  <div class="hint">活動結束或重新測試時使用。會刪除 groups / players / scores / uploads / current / notes / phase。</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -266,7 +266,7 @@ td .medal{font-weight:900;}
 
   // ---- reset ----
   $('#btnResetAll').onclick=()=>{ if(!confirm('確定清空全部資料？此動作無法復原。'))return;
-    ['groups','players','scores','uploads','current','timer','locks'].forEach(k=>db.ref(k).remove());
+    ['groups','players','scores','uploads','current','timer','locks','notes'].forEach(k=>db.ref(k).remove());
     db.ref('phase').set(0); alert('已清空'); };
 })();
 </script>
