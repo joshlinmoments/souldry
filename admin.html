@@ -155,7 +155,7 @@ td .medal{font-weight:900;}
 </div>
 
 <!-- 成績 -->
-<div class="sec">
+<div class="sec" id="secResult">
   <h2>成績結算 <small>階段5</small></h2>
   <div class="row" style="margin-bottom:10px">
     <button class="act amber" id="btnReveal">🏆 公布成績（推到階段5）</button>
@@ -243,12 +243,21 @@ td .medal{font-weight:900;}
       $('#deckPos').textContent=(p&&p.n)?('第 '+(p.i+1)+' / '+p.n+' 頁'):'—'; });
   }
 
+  // 階段5 公布成績：把「成績結算」自動上移到計時器(控制列)下方，其他階段還原原位
+  const _duo=$('.duo'), _secResult=$('#secResult');
+  const _resultHome=document.createComment('result-home');
+  if(_secResult&&_secResult.parentNode) _secResult.parentNode.insertBefore(_resultHome,_secResult);
+  function placeResult(){ if(!_secResult||!_duo)return;
+    if(state.phase===5){ if(_duo.nextElementSibling!==_secResult) _duo.insertAdjacentElement('afterend',_secResult); }
+    else if(_resultHome.nextSibling!==_secResult){ _resultHome.parentNode.insertBefore(_secResult,_resultHome.nextSibling); } }
+
   function renderPhase(){ $$('.phbtn').forEach(b=>b.classList.toggle('on',+b.dataset.p===state.phase));
     $('#phLabel').textContent='目前：'+(PHASES[state.phase]?PHASES[state.phase][1]:'—');
     // 階段6 講道理：大螢幕翻頁取代評分控制（同一欄位切換）
     const talk=state.phase===6;
     $('#secScore').style.display=talk?'none':'';
-    $('#secDeck').style.display=talk?'':'none'; }
+    $('#secDeck').style.display=talk?'':'none';
+    placeResult(); }
 
   function renderSel(){
     let total=0;
