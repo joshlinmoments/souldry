@@ -211,7 +211,7 @@ body{
   text-transform:uppercase;opacity:0;}
 .reveal-title{font-weight:900;font-size:30px;letter-spacing:.1em;margin:4px 0;opacity:0;}
 .reveal-answer{font-family:"Noto Serif TC",serif;font-weight:500;font-size:19px;line-height:2;
-  color:#fff;max-width:26ch;margin:18px auto 0;opacity:0;text-align:center;letter-spacing:.02em;}
+  color:#fff;max-width:32ch;margin:18px auto 0;opacity:0;text-align:center;letter-spacing:.02em;white-space:pre-line;}
 .reveal-src{color:var(--muted);font-size:13px;margin-top:14px;opacity:0;}
 .show{animation:risein .7s ease forwards;}
 @keyframes risein{to{opacity:1;transform:none}}
@@ -224,7 +224,7 @@ body{
 #discuss{padding:64px 20px calc(40px + var(--safe-b));}
 .card{background:#1d1622;border:1px solid #3a2d40;border-radius:16px;padding:16px 16px 18px;margin-bottom:14px;}
 .card h3{margin:0 0 10px;font-size:14px;color:var(--amber);letter-spacing:.1em;}
-.q-answer{font-family:"Noto Serif TC",serif;font-size:17px;line-height:1.95;color:#fff;}
+.q-answer{font-family:"Noto Serif TC",serif;font-size:17px;line-height:1.95;color:#fff;white-space:pre-line;}
 .q-src{color:var(--muted);font-size:12.5px;margin-top:8px;}
 .cand{border-top:1px dashed #3a2d40;padding:11px 0;}
 .cand:first-of-type{border-top:0;}
@@ -261,8 +261,22 @@ body{
 .submit-score.done{background:#223a2b;color:#8fe0a8;}
 .self-note{background:#2a1f30;border:1px solid #4a3b4e;border-radius:14px;padding:26px 16px;text-align:center;
   color:var(--amber2);font-size:17px;font-weight:700;line-height:1.7;}
-.notes-box{width:100%;min-height:90px;background:#1d1622;border:1px solid #3a2d40;border-radius:12px;
-  color:var(--cream);padding:12px;font-family:inherit;font-size:14px;resize:vertical;}
+/* 玩家即時心得彈幕 */
+.dm-stage{position:relative;height:132px;overflow:hidden;border-radius:12px;
+  background:radial-gradient(120% 100% at 50% 0%,#221428,#140d18 70%);border:1px solid #3a2d40;margin-bottom:10px;}
+.dm-stage .dm-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#7d6c7f;font-size:13px;text-align:center;padding:0 16px;}
+.pdm{position:absolute;left:0;white-space:nowrap;font-weight:700;font-size:14px;color:#ffe9c9;
+  background:rgba(44,27,51,.72);border:1px solid rgba(255,255,255,.12);border-radius:999px;
+  padding:5px 13px;will-change:transform;box-shadow:0 3px 10px rgba(0,0,0,.35);}
+.pdm .nm{color:var(--amber2);font-weight:800;margin-right:7px;font-size:.85em;}
+.pdm.me{background:rgba(245,182,65,.22);border-color:rgba(245,182,65,.5);color:#fff;}
+.dm-input{display:flex;gap:8px;}
+.dm-input input{flex:1;min-width:0;background:#1d1622;border:1px solid #4a3b4e;border-radius:12px;
+  color:var(--cream);padding:12px 14px;font-family:inherit;font-size:16px;}
+.dm-send{flex:0 0 auto;border:0;border-radius:12px;padding:0 18px;font-weight:800;font-size:15px;
+  background:linear-gradient(180deg,var(--amber2),var(--amber));color:#3a2600;cursor:pointer;}
+.dm-send:active{transform:translateY(1px);}
 
 /* ---------- RESULT (stage 5) ---------- */
 #result{padding:64px 20px calc(40px + var(--safe-b));}
@@ -397,9 +411,13 @@ body{
     <div class="h-step">STEP 4 · 互相評分</div>
     <div class="h-title">為上台這組打分</div>
     <div id="scoreBody"></div>
-    <div class="card"><h3>我的心得筆記</h3>
-      <div class="h-desc" style="margin:0 0 6px">只有你自己看得到，隨手記下體悟</div>
-      <textarea class="notes-box" id="notesBox" placeholder="寫下你的體悟、金句、想法…"></textarea>
+    <div class="card"><h3>即時心得彈幕</h3>
+      <div class="h-desc" style="margin:0 0 8px">寫一句心得送出，會即時飄到大螢幕與大家的畫面 ✨</div>
+      <div class="dm-stage" id="pDanmaku"><div class="dm-empty">還沒有人留言，當第一個吧！</div></div>
+      <div class="dm-input">
+        <input id="noteInput" maxlength="40" placeholder="寫下體悟、金句、想法…（最多40字）" autocomplete="off">
+        <button class="dm-send" id="noteSend">送出</button>
+      </div>
     </div>
   </section>
 
@@ -639,7 +657,7 @@ body{
   /* ---------- SCORING (stage 4) ---------- */
   const SQ=[['講解經典原文，有讓你聽懂','q1'],['延伸的體悟讓你覺得也有啟發','q2'],['演示內容你覺得很有創意','q3']];
   let scoreGid=null, scoreSubbed=false, myScore={q1:0,q2:0,q3:0};
-  function goScore(){ show('score'); loadNotes();
+  function goScore(){ show('score'); startNotesDanmaku();
     if(USE_FB){ if(!scoreSubbed){ scoreSubbed=true; db.ref('current/group').on('value',s=>renderScore(+s.val()||1)); }
       else renderScore(scoreGid||1); }
     else renderScore(1);
@@ -669,12 +687,45 @@ body{
     if(!USE_FB){ alert('評分需連上 Firebase'); return; }
     db.ref('scores/'+scoreGid+'/p'+me.id).set({q1:myScore.q1,q2:myScore.q2,q3:myScore.q3,by:me.name,ts:Date.now()}).then(markDone);
   }
-  function loadNotes(){ const t=$('#notesBox'); if(!t)return; t.value=LS.get('souldry_notes','')||'';
-    t.oninput=()=>{ LS.set('souldry_notes',t.value); if(USE_FB&&me) db.ref('notes/p'+me.id).set({name:me.name,text:t.value,ts:Date.now()}); }; }
+  /* 玩家即時心得彈幕（phase 4 評分頁）：送出的心得即時廣播到 /notes，大家＋大螢幕都看得到 */
+  const escP=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let notesSub=false, allNotes=[], pdmTimer=null, pdmIdx=0, noteWired=false;
+  function spawnPdm(n){ const lane=$('#pDanmaku'); if(!lane)return;
+    const el=document.createElement('div'); el.className='pdm'+((n.mine||(me&&n.name===me.name))?' me':'');
+    el.innerHTML=(n.name?`<span class="nm">${escP(n.name)}</span>`:'')+escP(n.text);
+    lane.appendChild(el);
+    const laneW=lane.clientWidth,laneH=lane.clientHeight,elW=el.offsetWidth||120;
+    const rows=Math.max(2,Math.floor(laneH/34)),row=Math.floor(Math.random()*rows);
+    el.style.top=Math.round(row*(laneH/rows)+6)+'px';
+    const dur=7000+Math.random()*3000;
+    el.animate([{transform:`translateX(${laneW}px)`},{transform:`translateX(${-elW-10}px)`}],{duration:dur,easing:'linear'})
+      .onfinish=()=>el.remove();
+  }
+  function startNotesDanmaku(){
+    if(USE_FB && !notesSub){ notesSub=true;
+      db.ref('notes').on('value',s=>{ const o=s.val()||{};
+        allNotes=Object.values(o).filter(n=>n&&String(n.text||'').trim());
+        const emp=$('#pDanmaku .dm-empty'); if(emp) emp.style.display=allNotes.length?'none':''; }); }
+    if(!noteWired){ noteWired=true;
+      const send=()=>{ const inp=$('#noteInput'),tx=(inp.value||'').trim(); if(!tx)return;
+        LS.set('souldry_notes',tx);
+        if(USE_FB&&me){ db.ref('notes/p'+me.id).set({name:me.name,text:tx,ts:Date.now()}); }
+        else { allNotes.push({name:(me&&me.name)||'我',text:tx}); }
+        const emp=$('#pDanmaku .dm-empty'); if(emp) emp.style.display='none';
+        spawnPdm({name:(me&&me.name)||'我',text:tx,mine:true}); inp.value=''; inp.blur(); };
+      $('#noteSend').onclick=send;
+      $('#noteInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();send();} });
+      const draft=LS.get('souldry_notes',''); if(draft) $('#noteInput').value=draft;
+    }
+    if(pdmTimer)return;
+    pdmTimer=setInterval(()=>{ if(!$('#score').classList.contains('on'))return;
+      if(!allNotes.length)return; spawnPdm(allNotes[pdmIdx%allNotes.length]); pdmIdx++; },2200);
+  }
+  function stopNotesDanmaku(){ if(pdmTimer){clearInterval(pdmTimer);pdmTimer=null;} }
 
   /* ---------- RESULT (stage 5) ---------- */
   let resSub=false;
-  function goResult(){ show('result');
+  function goResult(){ show('result'); stopNotesDanmaku();
     if(!resSub && USE_FB){ resSub=true; db.ref('scores').on('value',s=>renderResult(s.val()||{})); }
     else if(!USE_FB) renderResult({});
   }
