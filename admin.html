@@ -26,6 +26,22 @@ h1 .b{font-family:"Oswald";font-style:italic;color:var(--amber);letter-spacing:.
 .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
 .sec h2{font-size:13px;letter-spacing:.08em;color:var(--amber);margin:0 0 10px;text-transform:uppercase;}
 .sec h2 small{color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px;}
+
+/* 可操控欄位：更醒目，和下方純數據監看區分 */
+.sec.ctrl{position:relative;background:#1f1a29;border-color:#4a3c24;
+  box-shadow:0 0 0 1px rgba(245,182,65,.06), 0 6px 18px rgba(0,0,0,.28);overflow:hidden;}
+.sec.ctrl::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--amber),#e59a2a);}
+.sec.ctrl>h2{display:flex;align-items:center;gap:8px;}
+.sec.ctrl>h2::before{content:"";width:7px;height:7px;border-radius:50%;flex:none;
+  background:var(--amber);box-shadow:0 0 9px var(--amber);}
+.sec.ctrl>h2[style*="--red"]::before{background:var(--red);box-shadow:none;}
+.sec.ctrl .act.ghost{background:#2c2539;border-color:#463a54;}
+.sec.ctrl .act.ghost:hover{border-color:var(--amber);color:var(--amber);}
+.sec.ctrl .phbtn:hover{border-color:#6a5a3a;}
+.sec.ctrl .act:active,.sec.ctrl .phbtn:active{transform:translateY(1px);}
+.sec.ctrl .act{transition:border-color .15s,color .15s,filter .15s;}
+.sec.ctrl .act.amber:hover,.sec.ctrl .act.green:hover,.sec.ctrl .act.red:hover{filter:brightness(1.07);}
 .duo{display:flex;gap:14px;align-items:flex-start;}
 .duo>.sec{flex:1 1 0;min-width:0;margin-bottom:14px;}
 @media(max-width:720px){.duo{flex-wrap:wrap;}.duo>.sec{flex:1 1 100%;}}
@@ -79,13 +95,8 @@ td .medal{font-weight:900;}
 <h1><span class="b">SOULDRY</span> 後台控台 <span class="conn no" id="conn">連線中…</span></h1>
 <div class="sub">修道解惑所 · 現場指揮中心（主講者推進階段、監看選題、控制評分與頒獎）</div>
 
-<div class="toolbar">
-  <a href="host.html" target="_blank" rel="noopener"><span class="ic">🖥</span> 開啟投影大螢幕</a>
-  <a href="index.html" target="_blank" rel="noopener"><span class="ic">📱</span> 開啟玩家畫面</a>
-</div>
-
 <!-- 階段控制 -->
-<div class="sec">
+<div class="sec ctrl">
   <h2>階段控制 <small id="phLabel"></small></h2>
   <div class="phases" id="phases"></div>
 </div>
@@ -93,7 +104,7 @@ td .medal{font-weight:900;}
 <!-- 左欄：評分控制／大螢幕翻頁（同位切換）＋ 右欄：計時器 -->
 <div class="duo">
   <!-- 報告 + 評分控制（階段6 時隱藏，換成大螢幕翻頁） -->
-  <div class="sec" id="secScore">
+  <div class="sec ctrl" id="secScore">
     <h2>報告 · 評分控制 <small>階段4</small></h2>
     <div class="row">
       <span>目前上台：</span>
@@ -104,7 +115,7 @@ td .medal{font-weight:900;}
     <div class="hint" id="scoreProg"></div>
   </div>
   <!-- 大螢幕翻頁（只在階段6 講道理出現，取代評分控制） -->
-  <div class="sec" id="secDeck" style="display:none">
+  <div class="sec ctrl" id="secDeck" style="display:none">
     <h2>大螢幕翻頁 <small>階段6 · 同步主講大螢幕</small></h2>
     <div class="row">
       <button class="act ghost" id="deckPrev">‹ 上一頁</button>
@@ -114,7 +125,7 @@ td .medal{font-weight:900;}
     <div class="hint">翻頁會同步到主講大螢幕（也可直接用大螢幕鍵盤 ← →）。</div>
   </div>
   <!-- 計時器 -->
-  <div class="sec">
+  <div class="sec ctrl">
     <h2>討論計時器 <small>階段3</small></h2>
     <div class="tbig" id="tshow">—</div>
     <div class="row">
@@ -164,9 +175,14 @@ td .medal{font-weight:900;}
   <div class="plist" id="talkList"></div>
 </div>
 
-<!-- 危險區 -->
+<!-- 快速開啟畫面 ＋ 危險區 -->
 <div class="sec">
-  <h2 style="color:var(--red)">重置</h2>
+  <h2>開啟畫面 <small>在新分頁打開</small></h2>
+  <div class="toolbar">
+    <a href="host.html" target="_blank" rel="noopener"><span class="ic">🖥</span> 開啟投影大螢幕</a>
+    <a href="index.html" target="_blank" rel="noopener"><span class="ic">📱</span> 開啟玩家畫面</a>
+  </div>
+  <h2 style="color:var(--red);margin-top:16px">重置</h2>
   <div class="row">
     <button class="act red" id="btnResetAll">⚠ 清空全部（選題/名單/分數/階段）</button>
   </div>
