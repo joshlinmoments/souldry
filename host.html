@@ -367,7 +367,8 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
         if(S.idx>=slides.length) S.idx=Math.max(0,slides.length-1);
         paint();
       },
-      go(dir){ if(!S.slides.length)return; const n=S.idx+dir; if(n<0||n>=S.slides.length)return; S.idx=n; paint(); }
+      go(dir){ if(!S.slides.length)return; const n=S.idx+dir; if(n<0||n>=S.slides.length)return; S.idx=n; paint(); },
+      pos(){ return {i:S.idx,n:S.slides.length}; }
     };
   }
   const deck4=createDeck({slide:'#deckSlide',prev:'#deckPrev',next:'#deckNext',dots:'#deckDots',page:'#deckPage',
@@ -382,16 +383,31 @@ body{background:var(--bg);color:var(--cream);font-family:"Noto Sans TC",sans-ser
     deck4.set([{type:'quote',d:d}].concat(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url}))), g);
     const nn=Object.keys(state.scores[g]||{}).length;
     $('#s4prog').textContent=`第${g}組 · 已收到 ${nn} 份評分`;
+    deckPub();
   }
   function renderTalk(){
     const ups=state.uploads.talk?Object.values(state.uploads.talk):[];
     deck6.set(ups.map(f=>({type:(f.type||'').includes('pdf')?'pdf':'img',url:f.url})), 'talk');
+    deckPub();
   }
-  $('#deckPrev').onclick=()=>deck4.go(-1); $('#deckNext').onclick=()=>deck4.go(1);
-  $('#talkPrev').onclick=()=>deck6.go(-1); $('#talkNext').onclick=()=>deck6.go(1);
+  function activeDeck(){ return state.phase===4?deck4:(state.phase===6?deck6:null); }
+  let _lastPub='';
+  function deckPub(){ const d=activeDeck(); if(!d||!db)return; const p=d.pos();
+    const key=state.phase+':'+p.i+':'+p.n; if(key===_lastPub)return; _lastPub=key;
+    db.ref('deck/pos').set(p.n?{i:p.i,n:p.n,ph:state.phase}:null); }
+  $('#deckPrev').onclick=()=>{deck4.go(-1);deckPub();}; $('#deckNext').onclick=()=>{deck4.go(1);deckPub();};
+  $('#talkPrev').onclick=()=>{deck6.go(-1);deckPub();}; $('#talkNext').onclick=()=>{deck6.go(1);deckPub();};
   document.addEventListener('keydown',e=>{
     if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return; const dir=e.key==='ArrowLeft'?-1:1;
-    if(state.phase===4)deck4.go(dir); else if(state.phase===6)deck6.go(dir); });
+    if(state.phase===4)deck4.go(dir); else if(state.phase===6)deck6.go(dir); deckPub(); });
+  // 主控台翻頁指令 → 大螢幕翻頁（phase 4 報告 / phase 6 講道理共用）
+  let _nudgeReady=false,_nudgeSeq=null;
+  if(db){ db.ref('deck/nudge').on('value',s=>{ const v=s.val();
+    if(!_nudgeReady){ _nudgeReady=true; _nudgeSeq=v&&v.seq; return; }   // 忽略訂閱當下既有值，避免刷新時亂翻
+    if(!v||!v.seq||v.seq===_nudgeSeq)return; _nudgeSeq=v.seq;
+    const dir=(+v.dir<0)?-1:1;
+    if(state.phase===4)deck4.go(dir); else if(state.phase===6)deck6.go(dir);
+    deckPub(); }); }
   function tally(){
     return DRINKS.map(d=>{const sc=state.scores[d.id]||{};let q1=0,q2=0,q3=0,n=0;
       Object.values(sc).forEach(v=>{q1+=+v.q1||0;q2+=+v.q2||0;q3+=+v.q3||0;n++;});

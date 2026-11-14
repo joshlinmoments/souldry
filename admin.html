@@ -77,6 +77,17 @@ td .medal{font-weight:900;}
   <div class="phases" id="phases"></div>
 </div>
 
+<!-- 大螢幕翻頁（階段4 報告 / 階段6 講道理） -->
+<div class="sec">
+  <h2>大螢幕翻頁 <small>階段4 報告 ／ 階段6 講道理</small></h2>
+  <div class="row">
+    <button class="act ghost" id="deckPrev">‹ 上一頁</button>
+    <button class="act ghost" id="deckNext">下一頁 ›</button>
+    <span class="stat" id="deckPos" style="margin-left:auto">—</span>
+  </div>
+  <div class="hint">在這裡翻頁會同步到主講大螢幕（也可直接用大螢幕鍵盤 ← →）。</div>
+</div>
+
 <!-- 評分控制 ＋ 計時器（左右兩欄，同一列） -->
 <div class="duo">
   <!-- 報告 + 評分控制 -->
@@ -186,6 +197,9 @@ td .medal{font-weight:900;}
   $('#curGroup').onchange=()=>setCurrentGroup(+$('#curGroup').value);
   $('#prevG').onclick=()=>stepGroup(-1); $('#nextG').onclick=()=>stepGroup(1);
   function stepGroup(d){ let g=(state.current.group||1)+d; g=Math.max(1,Math.min(10,g)); setCurrentGroup(g); }
+  // ---- 大螢幕翻頁（送指令到 deck/nudge，大螢幕接收後翻頁）----
+  function deckNudge(dir){ if(db) db.ref('deck/nudge').set({seq:Date.now(),dir:dir}); }
+  $('#deckPrev').onclick=()=>deckNudge(-1); $('#deckNext').onclick=()=>deckNudge(1);
   $('#lockSel').onchange=()=>db.ref('locks/selection').set($('#lockSel').checked);
 
   // ---- listeners ----
@@ -197,6 +211,8 @@ td .medal{font-weight:900;}
     db.ref('current').on('value',s=>{ state.current=s.val()||{}; renderCurrent(); });
     db.ref('locks/selection').on('value',s=>{ $('#lockSel').checked=!!s.val(); });
     db.ref('timer').on('value',s=>{ state.timer=s.val()||{}; });
+    db.ref('deck/pos').on('value',s=>{ const p=s.val();
+      $('#deckPos').textContent=(p&&p.n)?('第 '+(p.i+1)+' / '+p.n+' 頁'):'—'; });
   }
 
   function renderPhase(){ $$('.phbtn').forEach(b=>b.classList.toggle('on',+b.dataset.p===state.phase));
@@ -301,7 +317,7 @@ td .medal{font-weight:900;}
 
   // ---- reset ----
   $('#btnResetAll').onclick=()=>{ if(!confirm('確定清空全部資料（含報到）？此動作無法復原。'))return;
-    ['checkins','groups','players','scores','uploads','current','timer','locks','notes'].forEach(k=>db.ref(k).remove());
+    ['checkins','groups','players','scores','uploads','current','timer','locks','notes','deck'].forEach(k=>db.ref(k).remove());
     db.ref('phase').set(0); alert('已清空（含報到資料）'); };
 })();
 </script>
